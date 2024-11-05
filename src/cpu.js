@@ -1,91 +1,122 @@
-const createMemory = require('./create-memory');
+const createMemory = require('./create-memory').default;
+const Instructions = require('./instructions');
 
 class CPU {
-
     constructor(RAM, ROM) {
-        this.RAM = RAM
-        this.ROM = ROM
+        this.RAM = RAM;
+        this.ROM = ROM;
         this.registerNames = [
             'r0', 'r1', 'r2', 'r3', 'r4', 'r5', 'r6', 'r7', 
             'r8', 'r9', 'r10', 'r11', 'r12', 'r13', 'r14', 'r15', 'PC'
-        ]
+        ];
         this.registers = createMemory(this.registerNames.length);
         this.registerMap = this.registerNames.reduce((map, nameRegister, index) => {
             map[nameRegister] = index;
             return map;
-        }, {})
+        }, {});
     }
 
     getRegister(name) {
         if (!(name in this.registerMap)) {
-            throw new Error('getRegister: No Such Register ' + name)
+            throw new Error('getRegister: No Such Register ' + name);
         }
-        return this.registers.getUnit8(this.registerMap[name])
+        return this.registers.getUint8(this.registerMap[name]);
     }
 
     setRegister(name, value) {
         if (!(name in this.registerMap)) {
-            throw new Error('setRegister: No Such Register ' + name)
+            throw new Error('setRegister: No Such Register ' + name);
         }
-        return this.registers.setUnit8(this.registerMap[name], value)
+        return this.registers.setUint8(this.registerMap[name], value);
     }
     
     fetch() {
-        const nextInstructionAddress = this.getRegister('PC')
-        const instruction = this.ROM.getUnit8(nextInstructionAddress);
-        this.setRegister('PC', nextInstructionAddress + 1)
-        return instruction
+        const nextInstructionAddress = this.getRegister('PC') * 2;
+        const instruction = this.ROM.getUint16(nextInstructionAddress); 
+        this.setRegister('PC', this.getRegister('PC') + 1); 
+        return instruction;
     }
 
-    execute(instruction){
-        switch(instruction) {
+    execute(instruction) {
+        const A = (instruction >> 12) & 0b1111; // Bits 15-12
+        const B = (instruction >> 8) & 0b1111;  // Bits 11-8
+        const C = (instruction >> 4) & 0b1111;  // Bits 7-4
+        const OPCODE = instruction & 0b1111;    // Bits 3-0
 
-            //NOP - No Operation
-            case 0b0000: {
+        switch(OPCODE) {
 
+            case Instructions.NOP: {
+                return
             }
 
-            //HLT - Halt CPU
-            case 0b001: {
-
+            case Instructions.HLT: {
+                return
             }
 
-            //ADD - Addition
-            case 0b0010: {
-
+            case Instructions.ADD: {
+                const regA = this.registers.getUint8(A);
+                const regB = this.registers.getUint8(B);
+                const result = regA + regB;
+                this.registers.setUint8(C, result);
+                return
             }
 
-            //SUB - Subtraction
-            case 0b0011: {
-
+            case Instructions.SUB: {
+                return
             }
 
-            //NOR - Bitwise NOR
-            case 0b0100: {
-
+            case Instructions.NOR: {
+                return
             }
 
-            //AND - Bitwise AND
+            case Instructions.AND: {
+                return
+            }
 
-            //RSH - Right Shift
+            case Instructions.XOR: {
+                return
+            }
 
-            //LDI - Load Immadiate
+            case Instructions.RSH: {
+                return
+            }
 
-            //ADI - Add Immadiate
+            case Instructions.LDI: {
+                const offset = (A << 4) | B;
+                this.registers.setUint8(C, offset)
+                return
+            }
 
-            //JMP - Jump
+            case Instructions.ADI: {
+                return
+            }
+            case Instructions.JMP: {
+                return
+            }
+            case Instructions.BRH: {
+                return
+            }
+            case Instructions.JID: {
+                return
+            }
+            case Instructions.ADC: {
+                return
+            }
+            case Instructions.LOD: {
+                return
+            }
+            case Instructions.STR: {
+                return
+            }
 
-            //BRH - Branch
-
-            //JID - Jumop-in-Diect Register
-
-            //ADC - Add With Carry
-
-            //LOD - Ram Memory Load
-
-            //STR - Ram Memory Store
+           
         }
+    }
+
+    step() {
+        const instruction = this.fetch();
+        return this.execute(instruction);
     }
 }
 
-export default CPU;
+module.exports = CPU;
