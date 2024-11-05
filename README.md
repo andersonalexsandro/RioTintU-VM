@@ -4,6 +4,8 @@
 
 This project is a Virtual Machine to logically emulate my 8 Bit Minecraft Computer, which is based on real computational concepts.
 
+Runing Fibonacci sequence: [youtube](https://www.youtube.com/watch?v=nEHz9QRe7IQ)
+
 ## specifications
 
 - 256 x 16 Bits Instruction Read Only Memory, 8 Bit address - 512Bytes ROM
