@@ -1,4 +1,4 @@
-const createMemory = require('./create-memory').default;
+const createMemory = require('./create-memory');
 const Instructions = require('./instructions');
 
 class CPU {
@@ -14,6 +14,14 @@ class CPU {
             map[nameRegister] = index;
             return map;
         }, {});
+    }
+
+    debug() {
+        this.registerNames.forEach(name => {
+            const value = this.getRegister(name);
+            console.log(`${name}: ${value.toString(2).padStart(8, '0')}`);
+        });
+        console.log()
     }
 
     getRegister(name) {
