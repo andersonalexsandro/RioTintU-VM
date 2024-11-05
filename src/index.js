@@ -6,6 +6,7 @@ const ROM = createMemory(512);
 const writeBytes = new Uint8Array(ROM.buffer);
 
 writeBytes[0] = concatenate4BitArrays(0b0000, 0b0001); 
+writeBytes[1] = concatenate4BitArrays(0b0001, Instructions.LDI); 
  
 
 writeBytes[2] = concatenate4BitArrays(0b0000, 0b0010); 
