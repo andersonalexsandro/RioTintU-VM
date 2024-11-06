@@ -16,9 +16,9 @@ Runing Fibonacci sequence: [youtube](https://www.youtube.com/watch?v=nEHz9QRe7IQ
 - 8 Bit Arithmetic Logic Unit - Add and Bitwase operations -  [ISA](https://docs.google.com/spreadsheets/d/1ce8okA9Iy8wLN9gtn3IzqqO52bT0SPEkzZ5C6IkLoVc/edit?gid=0#gid=0)
 - 8 ALU Flags (COUT, !COUT, ZERO, !ZERO, EVEN, !EVEN, MSB, !MSB)
 - 16 x 8 Bit Dual Read Register - r0 Read Only zero
-- 32 x 32 Display (acessed by Memory Maped I/O)
-- 10 Char Display (acessed by Memory Maped I/O)
-- 8 bit Display (acessed by Memory Maped I/O)
+- 32 x 32 Display (Memory Maped I/O)
+- 10 Char Display (Memory Maped I/O)
+- 8 bit Display (Memory Maped I/O)
 
 
 ### Objectives:
