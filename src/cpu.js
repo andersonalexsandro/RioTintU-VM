@@ -40,6 +40,14 @@ class CPU {
         return console.log(this.RAM.getUint8(address).toString(2).padStart(8, '0') + "\n")
     }
 
+    viewNextInstruction() {
+        const nextInstructionAddress = this.getRegister('PC') * 2;
+        const instruction = this.ROM.getUint16(nextInstructionAddress); 
+        const byte2 = ((instruction >> 8) & 0b11111111).toString(2).padStart('8', 0)
+        const byte1 = (instruction & 0b11111111).toString(2).padStart('8', 0)
+        console.log(`Program ROM - Byte 2: ${byte2}, Byte 1: ${byte1}`)
+    }
+
     getRegister(name) {
         if (!(name in this.registerMap)) {
             throw new Error('getRegister: No Such Register ' + name);
