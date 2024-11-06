@@ -1,19 +1,31 @@
 const createMemory = require('./create-memory');
 const Instructions = require('./instructions');
+const Flags = require('./flags');
+const concat4bits = require('./utils')
 
 class CPU {
     constructor(RAM, ROM) {
-        this.RAM = RAM;
-        this.ROM = ROM;
+
+        this.RAM = RAM
+        this.ROM = ROM
+
+        this.ZERO = true
+        this.COUT = false
+        this.MSB = false
+        this.EVEN = false
+
         this.registerNames = [
             'r0', 'r1', 'r2', 'r3', 'r4', 'r5', 'r6', 'r7', 
             'r8', 'r9', 'r10', 'r11', 'r12', 'r13', 'r14', 'r15', 'PC'
         ];
+
         this.registers = createMemory(this.registerNames.length);
+
         this.registerMap = this.registerNames.reduce((map, nameRegister, index) => {
             map[nameRegister] = index;
             return map;
         }, {});
+
     }
 
     debug() {
@@ -22,6 +34,10 @@ class CPU {
             console.log(`${name}: ${value.toString(2).padStart(8, '0')}`);
         });
         console.log()
+    }
+
+    viewRAM(address){
+        return console.log(this.RAM.getUint8(address).toString(2).padStart(8, '0') + "\n")
     }
 
     getRegister(name) {
@@ -66,6 +82,7 @@ class CPU {
                 const regB = this.registers.getUint8(B);
                 const result = regA + regB;
                 this.registers.setUint8(C, result);
+                this.setFlag(result);
                 return
             }
 
@@ -90,7 +107,7 @@ class CPU {
             }
 
             case Instructions.LDI: {
-                const offset = (A << 4) | B;
+                const offset = concat4bits(A, B)
                 this.registers.setUint8(C, offset)
                 return
             }
@@ -98,12 +115,53 @@ class CPU {
             case Instructions.ADI: {
                 return
             }
-            case Instructions.JMP: {
-                return
-            }
+
             case Instructions.BRH: {
+                const flag = C & 0b0111
+                switch (flag) {
+                    
+                    case Flags.NOT_EVEN: 
+                        if (this.EVEN) return
+                        break
+                    
+                    case Flags.EVEN:
+                        if (!this.EVEN) return
+                        break
+
+                    case Flags.ZERO:
+                        if (!this.ZERO) return
+                        break
+
+                    case Flags.NOT_ZERO:
+                        if (this.ZERO) return
+                        break
+
+                    case Flags.NOT_COUT:
+                        if (this.COUT) return
+                        break
+
+                    case Flags.COUT:
+                        if (!this.COUT) return
+                        break
+
+                    case Flags.NOT_MSB:
+                        if (this.MSB) return
+                        break
+
+                    case Flags.MSB:
+                        if (!this.MSB) return
+                        break
+                }
+                const address = concat4bits(A, B)
+                this.setRegister('PC', address)
+            }
+
+            case Instructions.JMP: {
+                const address = concat4bits(A, B)
+                this.setRegister('PC', address)
                 return
             }
+
             case Instructions.JID: {
                 return
             }
@@ -111,19 +169,32 @@ class CPU {
                 return
             }
             case Instructions.LOD: {
+                const regA = this.registers.getUint8(A)
+                const address = regA + B
+                const ramValue = this.RAM.getUint8(address)
+                this.registers.setUint8(C, ramValue)
                 return
             }
             case Instructions.STR: {
+                const regA = this.registers.getUint8(A)
+                const address = regA + B
+                const regC = this.registers.getUint8(C)
+                this.RAM.setUint8(address, regC)
                 return
             }
-
-           
         }
     }
 
     step() {
         const instruction = this.fetch();
         return this.execute(instruction);
+    }
+
+    setFlag(result){
+        this.COUT = result > 0b11111111;
+        this.ZERO = result === 0b00000000;
+        this.EVEN = (result % 2) === 0;
+        this.MSB = (result & 0b10000000) !== 0;
     }
 }
 
