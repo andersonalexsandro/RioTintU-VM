@@ -95,22 +95,48 @@ class CPU {
             }
 
             case Instructions.SUB: {
+                const regA = this.registers.getUint8(A)
+                const regB = this.registers.getUint8(B)
+                const negB = (~regB) + 1
+                const result = regA + negB
+                this.setFlag(result)
+                this.registers.setUint8(C, result)
                 return
             }
 
             case Instructions.NOR: {
+                const regA = this.registers.getUint8(A)
+                const regB = this.registers.getUint8(B)
+                const result = ~(regA | regB)
+                this.registers.setUint8(C, result)
+                this.setFlag(result)
                 return
             }
 
             case Instructions.AND: {
+                const regA = this.registers.getUint8(A)
+                const regB = this.registers.getUint8(B)
+                const result = regA & regB
+                this.setFlag(result)
+                this.registers.setInt8(C, result)
                 return
             }
 
             case Instructions.XOR: {
+                const regA = this.registers.getUint8(A)
+                const regB = this.registers.getUint8(B)
+                const result = regA ^ regB
+                this.setFlag(result)
+                this.registers.setUint8(C, result)
                 return
             }
 
             case Instructions.RSH: {
+                const regA = this.registers.getUint8(A)
+                const result = (regA >> 1)
+                this.setFlag(result)
+                if (regA % 2 !== 0) this.COUT = true
+                this.registers.setUint8(C, result)
                 return
             }
 
@@ -121,6 +147,11 @@ class CPU {
             }
 
             case Instructions.ADI: {
+                const regC = this.registers.getInt8(C)
+                const immediate = concat4bits(A, B)
+                const result = regC + immediate
+                this.setFlag(result)
+                this.registers.setUint8(C, result)
                 return
             }
 
@@ -171,9 +202,19 @@ class CPU {
             }
 
             case Instructions.JID: {
+                const offset = concat4bits(A, B)
+                const regC = this.registers.getUint8(C)
+                const result = regC + offset
+                this.setRegister('PC', result)
                 return
             }
             case Instructions.ADC: {
+                const regA = this.registers.getUint8(A);
+                const regB = this.registers.getUint8(B);
+                const cin = this.COUT ? 1 : 0
+                const result = regA + regB + cin;
+                this.setFlag(result);
+                this.registers.setUint8(C, result);
                 return
             }
             case Instructions.LOD: {
