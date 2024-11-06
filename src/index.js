@@ -28,6 +28,9 @@ writeBytes[i++] = concat4bits(Flags.NOT_COUT, Instructions.BRH);
 writeBytes[i++] = concat4bits(0b0000, 0b0000); 
 writeBytes[i++] = concat4bits(0b0010, Instructions.STR); 
 
+writeBytes[i++] = concat4bits(0b0000, 0b0000); 
+writeBytes[i++] = concat4bits(0b0000, Instructions.HLT); 
+
 cpu.debug();
 cpu.viewNextInstruction();
 
@@ -37,7 +40,11 @@ const rl = readline.createInterface({
 });
 
 rl.on('line', () => {
-    cpu.step();
+    const halt = cpu.step();
     cpu.debug();
     cpu.viewNextInstruction();
+    if (halt) {
+        console.log("Program halted.");
+        rl.close();
+    }
 });
