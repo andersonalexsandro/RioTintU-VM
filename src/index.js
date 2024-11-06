@@ -18,11 +18,11 @@ writeBytes[i++] = concat4bits(0b0010, Instructions.LDI);
 writeBytes[i++] = concat4bits(0b0001, 0b0010); 
 writeBytes[i++] = concat4bits(0b0001, Instructions.ADD); 
 
-writeBytes[i++] = concat4bits(0b0000, 0b0100); 
+writeBytes[i++] = concat4bits(0b0000, 0b0010); 
 writeBytes[i++] = concat4bits(Flags.NOT_COUT, Instructions.BRH); 
 
 writeBytes[i++] = concat4bits(0b0000, 0b0000); 
-writeBytes[i++] = concat4bits(0b0001, Instructions.STR); 
+writeBytes[i++] = concat4bits(0b0010, Instructions.STR); 
 
 const RAM = createMemory(256)
 const cpu = new CPU(RAM, ROM);
