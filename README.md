@@ -1,5 +1,7 @@
 # RioTintU-VM
 
+Inspiration to this VM - [youtube](https://www.youtube.com/playlist?list=PLP29wDx6QmW5DdwpdwHCRJsEubS5NrQ9b)
+
 ## 8 Bit Minecraft Computer Virtual Machine
 
 This project is a Virtual Machine to logically emulate my 8 Bit Minecraft Computer, which is based on real computational concepts.
