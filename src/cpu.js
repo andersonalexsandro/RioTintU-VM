@@ -1,4 +1,4 @@
-const createMemory = require('./create-memory');
+const {createMemory} = require('./create-memory');
 const Instructions = require('./instructions');
 const Flags = require('./flags');
 const concat4bits = require('./utils');

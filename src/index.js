@@ -1,13 +1,20 @@
 const readline = require('readline');
-const createMemory = require('./create-memory');
+const {createMemory, createMemoryAbDv} = require('./create-memory');
 const Instructions = require('./instructions');
 const CPU = require('./cpu');
 const concat4bits = require('./utils');
 const Flags = require('./flags');
+const MemoryMapper = require('./memory-mapper')
+
+const [RAMab, RAMdv] = createMemoryAbDv(256)
+
+const mappedRAM = new MemoryMapper()
+mappedRAM.map(RAMdv, 0b00000000, 0b11111111, false)
+
+
 
 const ROM = createMemory(512);
-const RAM = createMemory(256);
-const cpu = new CPU(RAM, ROM);
+const cpu = new CPU(mappedRAM, ROM);
 
 const writeBytes = new Uint8Array(ROM.buffer);
 
