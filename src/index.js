@@ -5,10 +5,11 @@ const CPU = require('./cpu');
 const concat4bits = require('./utils');
 const Flags = require('./flags');
 const MemoryMapper = require('./memory-mapper');
+const Screen = require('./screen')
 
 const [RAMab, RAM] = createMemoryAbDv(256);
 
-const screen = new DataView(RAMab, 240, 7)
+const screen = new Screen(RAMab)
 const charDisplay = new DataView(RAMab, 247, 3)
 const numberDisplay = new DataView(RAMab, 250, 4)
 const controller = new DataView(RAMab, 254, 2)
