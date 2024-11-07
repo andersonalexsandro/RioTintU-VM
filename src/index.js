@@ -50,6 +50,7 @@ rl.on('line', () => {
     const halt = cpu.step();
     cpu.debug();
     cpu.viewNextInstruction();
+    cpu.viewRAM(0b00000000)
     if (halt) {
         console.log("Program halted.");
         rl.close();
