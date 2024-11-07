@@ -1,20 +1,28 @@
 const readline = require('readline');
-const {createMemory, createMemoryAbDv} = require('./create-memory');
+const { createMemory, createMemoryAbDv } = require('./create-memory');
 const Instructions = require('./instructions');
 const CPU = require('./cpu');
 const concat4bits = require('./utils');
 const Flags = require('./flags');
-const MemoryMapper = require('./memory-mapper')
+const MemoryMapper = require('./memory-mapper');
 
-const [RAMab, RAMdv] = createMemoryAbDv(256)
+const [RAMab, RAM] = createMemoryAbDv(256);
 
-const mappedRAM = new MemoryMapper()
-mappedRAM.map(RAMdv, 0b00000000, 0b11111111, false)
+const screen = new DataView(RAMab, 240, 7)
+const charDisplay = new DataView(RAMab, 247, 3)
+const numberDisplay = new DataView(RAMab, 250, 4)
+const controller = new DataView(RAMab, 254, 2)
 
+const memoryMapper = new MemoryMapper();
 
+memoryMapper.map(screen,0b11110000, 0b11110110, true)
+memoryMapper.map(charDisplay,0b11110111, 0b11111001, true)
+memoryMapper.map(numberDisplay,0b11111010, 0b11111101, true)
+memoryMapper.map(controller,11111110, 0b11111111, true)
+memoryMapper.map(RAM, 0b00000000, 0b11101111, false);
 
 const ROM = createMemory(512);
-const cpu = new CPU(mappedRAM, ROM);
+const cpu = new CPU(memoryMapper, ROM);
 
 const writeBytes = new Uint8Array(ROM.buffer);
 
@@ -50,7 +58,7 @@ rl.on('line', () => {
     const halt = cpu.step();
     cpu.debug();
     cpu.viewNextInstruction();
-    cpu.viewRAM(0b00000000)
+    cpu.viewRAM(0b00000000);
     if (halt) {
         console.log("Program halted.");
         rl.close();

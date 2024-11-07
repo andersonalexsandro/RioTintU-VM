@@ -1,38 +1,43 @@
 class MemoryMapper {
-    constructor () {
-        this.regions = []
+    constructor() {
+        this.regions = [];
     }
 
-    map(device, start, end, remap = true){
+    map(device, start, end, remap = true) {
         const region = {
             device,
             start,
             end,
             remap
-        }
+        };
         this.regions.unshift(region);
 
         return () => {
-            this.regions = this.regions.filter( x => x != region)
-        }
+            this.regions = this.regions.filter(x => x !== region);
+        };
     }
 
     findRegion(address) {
-        const region = this.regions.find(r => address >= r.start && address <= r.end)
-        return region
+        return this.regions.find(r => address >= r.start && address <= r.end);
     }
 
     getUint8(address) {
-        const region = this.findRegion(address)
-        const finalAddress = region.remap ? address - region.start : address
-        region.device.getUnit8(finalAddress)
+        const region = this.findRegion(address);
+        if (!region) {
+            throw new Error(`Address ${address} out of bounds`);
+        }
+        const finalAddress = region.remap ? address - region.start : address;
+        return region.device.getUint8(finalAddress); // Certifique-se de que o método está correto
     }
 
     setUint8(address, value) {
-        const region = this.findRegion(address)
-        const finalAddress = region.remap ? address - region.start : address
-        return region.device.setUint8(finalAddress, value)
+        const region = this.findRegion(address);
+        if (!region) {
+            throw new Error(`Address ${address} out of bounds`);
+        }
+        const finalAddress = region.remap ? address - region.start : address;
+        return region.device.setUint8(finalAddress, value);
     }
 }
 
-module.exports = MemoryMapper
+module.exports = MemoryMapper;

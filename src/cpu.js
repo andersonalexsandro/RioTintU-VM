@@ -35,7 +35,16 @@ class CPU {
     }
 
     viewRAM(address) {
-        return console.log(this.RAM.getUint8(address).toString(2).padStart(8, '0') + "\n");
+        let output = `RAM at address ${address}: `;
+        for (let i = 0; i < 8; i++) {
+            const value = this.RAM.getUint8(address + i);
+            if (value === undefined) {
+                output += `undefined `;
+            } else {
+                output += `${value} `;
+            }
+        }
+        console.log(output.trim());
     }
 
     viewNextInstruction() {
