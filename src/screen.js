@@ -6,15 +6,15 @@ class Screen {
     }
 
     getX() {
-        return this.RAM.getUint8(ScreenMap.X) & 0b00011111;
+        return this.RAM.getUint8(ScreenMap.PIXEL_X) & 0b00011111;
     }
 
     getY() {
-        return this.RAM.getUint8(ScreenMap.Y) & 0b00011111;
+        return this.RAM.getUint8(ScreenMap.PIXEL_Y) & 0b00011111;
     }
 
     getUint8(address) {
-        if (address === ScreenMap.LOAD) {
+        if (address === ScreenMap.LOAD_PIXEL) {
             const point = this.getPointerIndex();
             return this.screen[point] & 0b00000001;
         }
@@ -23,25 +23,25 @@ class Screen {
 
     setUint8(address, value) {
         switch(address) {
-            case ScreenMap.X:
+            case ScreenMap.PIXEL_X:
                 this.RAM.setUint8(address, value);
                 break;
 
-            case ScreenMap.Y:
+            case ScreenMap.PIXEL_Y:
                 this.RAM.setUint8(address, value);
                 break;
 
-            case ScreenMap.DRAW:
+            case ScreenMap.DRAW_PIXEL:
                 const pointDraw = this.getPointerIndex();
                 this.buffer[pointDraw] = 0b11111111;
                 break;
 
-            case ScreenMap.CLEAR:
+            case ScreenMap.CLEAR_PIXEL:
                 const pointClear = this.getPointerIndex();
                 this.buffer[pointClear] = ScreenMap.CLEAR_COMMAND;
                 break;
 
-            case ScreenMap.BUFFER_PUSH:
+            case ScreenMap.BUFFER_SCREEN:
                 for (let i = 0; i < this.buffer.length; i++) {
                     const bufferContent = this.buffer[i];
 
@@ -62,7 +62,7 @@ class Screen {
                 this.buffer = new Uint8Array(this.screen.length);
                 break;
 
-            case ScreenMap.CLEAR_BUFFER:
+            case ScreenMap.CLEAR_SCREEN_BUFFER:
                 this.buffer = new Uint8Array(this.screen.length);
                 break;
 
@@ -81,13 +81,13 @@ class Screen {
 }
 
 const ScreenMap = {
-    X: 0b00000000,
-    Y: 0b00000001,
-    DRAW: 0b00000010,
-    CLEAR: 0b00000011,
-    LOAD: 0b00000100,
-    BUFFER_PUSH: 0b00000101,
-    CLEAR_BUFFER: 0b00000110,
+    PIXEL_X: 0b00000000,
+    PIXEL_Y: 0b00000001,
+    DRAW_PIXEL: 0b00000010,
+    CLEAR_PIXEL: 0b00000011,
+    LOAD_PIXEL: 0b00000100,
+    BUFFER_SCREEN: 0b00000101,
+    CLEAR_SCREEN_BUFFER: 0b00000110,
     CLEAR_COMMAND: 0b10101010
 };
 
