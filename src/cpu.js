@@ -34,8 +34,13 @@ class CPU {
         console.log();
     }
 
-    viewRAM(address) {
-        return console.log(this.RAM.getUint8(address).toString(2).padStart(8, '0') + "\n");
+    viewRAM(address, offset) {
+        let output = `RAM at address ${address} and offset ${offset}: `;
+        for (let i = 0; i < offset; i++) {
+            const value = this.RAM.getUint8(address + i);
+            output += `${value.toString(2).padStart('8', 0)} `;
+        }
+        console.log(output.trim());
     }
 
     viewNextInstruction() {

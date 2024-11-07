@@ -6,7 +6,10 @@ const concat4bits = require('./utils');
 const Flags = require('./flags');
 
 const ROM = createMemory(512);
-const RAM = createMemory(256);
+
+const RAMab = new ArrayBuffer(256)
+const RAM = new DataView(RAMab)
+
 const cpu = new CPU(RAM, ROM);
 
 const writeBytes = new Uint8Array(ROM.buffer);
@@ -33,6 +36,7 @@ writeBytes[i++] = concat4bits(0b0000, Instructions.HLT);
 
 cpu.debug();
 cpu.viewNextInstruction();
+cpu.viewRAM(0b00000000, 1)
 
 const rl = readline.createInterface({
     input: process.stdin,
@@ -42,6 +46,7 @@ const rl = readline.createInterface({
 rl.on('line', () => {
     const halt = cpu.step();
     cpu.debug();
+    cpu.viewRAM(0b00000000, 1)
     cpu.viewNextInstruction();
     if (halt) {
         console.log("Program halted.");
