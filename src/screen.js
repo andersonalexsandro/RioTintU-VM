@@ -30,6 +30,7 @@ class Screen {
             case ScreenMap.DRAW_PIXEL:
                 const intersection = this.getIntersectionIndex();
                 this.buffer[intersection] = 0b11111111;
+                
                 break;
 
             case ScreenMap.CLEAR_PIXEL:
@@ -37,7 +38,7 @@ class Screen {
                 this.buffer[intersectionClear] = ScreenMap.CLEAR_COMMAND;
                 break;
 
-            case ScreenMap.BUFFER_SCREEN:
+            case ScreenMap.PUSH_SCREEN_BUFFER:
                 for (let i = 0; i < this.buffer.length; i++) {
                     const bufferContent = this.buffer[i];
 
@@ -74,6 +75,37 @@ class Screen {
         const point = (y * 32) + x;
         return point;
     }
+
+    moveTo(x, y) {
+        process.stdout.write(`\x1b[${y};${x}H`);
+    }
+
+    log() {
+        this.moveTo();
+        process.stdout.write('█');
+    }
+
+    logScreenBuffer() {
+        console.log("Screen Buffer:");
+        for (let i = 0; i < 32; i++) {
+            let row = [];
+            for (let j = 0; j < 32; j++) {
+                row.push(this.buffer[i * 32 + j] === 0b11111111 ? '1' : '0');
+            }
+            console.log(row.join(' '));
+        }
+    }
+
+    logScreen() {
+        console.log("Screen:");
+        for (let i = 0; i < 32; i++) {
+            let row = [];
+            for (let j = 0; j < 32; j++) {
+                row.push(this.screen[i * 32 + j] === 0b11111111 ? '1' : '0');
+            }
+            console.log(row.join(' '));
+        }
+    }
 }
 
 const ScreenMap = {
@@ -87,3 +119,8 @@ const ScreenMap = {
 };
 
 module.exports = Screen;
+
+// Exemplo de uso
+const screen = new Screen(new ArrayBuffer(256));
+screen.logScreenBuffer(); // Loga o buffer da tela no terminal
+screen.logScreen(); // Loga a tela no terminal
