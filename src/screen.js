@@ -1,6 +1,6 @@
 class Screen {
     constructor(RAMab) {
-        this.RAM = new DataView(RAMab, 240, 7); // Mapped RAM addresses to screen
+        this.RAM = new DataView(RAMab, 246, 6); // Mapped RAM addresses to screen
         this.screen = new Uint8Array(32 * 32); // Screen Size
         this.buffer = new Uint8Array(this.screen.length);
     }
@@ -14,10 +14,6 @@ class Screen {
     }
 
     getUint8(address) {
-        if (address === ScreenMap.LOAD_PIXEL) {
-            const point = this.getPointerIndex();
-            return this.screen[point] & 0b00000001;
-        }
         return 0b00000000;
     }
 
@@ -81,13 +77,12 @@ class Screen {
 }
 
 const ScreenMap = {
-    PIXEL_X: 0b00000000,
-    PIXEL_Y: 0b00000001,
-    DRAW_PIXEL: 0b00000010,
-    CLEAR_PIXEL: 0b00000011,
-    LOAD_PIXEL: 0b00000100,
-    BUFFER_SCREEN: 0b00000101,
-    CLEAR_SCREEN_BUFFER: 0b00000110,
+    CLEAR_SCREEN_BUFFER: 0b00000000,
+    PUSH_SCREEN_BUFFER: 0b00000001,
+    CLEAR_PIXEL: 0b00000010,
+    DRAW_PIXEL: 0b00000011,
+    PIXEL_X: 0b00000100,
+    PIXEL_Y: 0b00000101,
     CLEAR_COMMAND: 0b10101010
 };
 

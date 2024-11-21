@@ -10,8 +10,7 @@ const Screen = require('./screen')
 const [RAMab, RAM] = createMemoryAbDv(256);
 
 const screen = new Screen(RAMab)
-const charDisplay = new DataView(RAMab, 247, 3)
-const numberDisplay = new DataView(RAMab, 250, 4)
+const numberDisplay = new DataView(RAMab, 252, 2)
 const controller = new DataView(RAMab, 254, 2)
 
 const memoryMapper = new MemoryMapper();
