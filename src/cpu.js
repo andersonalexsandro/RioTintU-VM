@@ -228,8 +228,7 @@ class CPU {
             }
 
             case Instructions.STR: {
-                const regA = this.
-                registers.getUint8(A);
+                const regA = this.registers.getUint8(A);
                 const address = regA + B;
                 const regC = this.registers.getUint8(C);
                 this.RAM.setUint8(address, regC);
