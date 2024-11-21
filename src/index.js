@@ -24,6 +24,7 @@ memoryMapper.map(joystick, 0b11111110, 0b11111111, true)
 const ROM = createMemory(512);
 const cpu = new CPU(memoryMapper, ROM);
 
+
 const writeBytes = new Uint8Array(ROM.buffer);
 
 let i = 0;
@@ -48,6 +49,7 @@ writeBytes[i++] = concat4bits(0b0000, Instructions.HLT);
 
 cpu.debug();
 cpu.viewNextInstruction();
+cpu.viewRAM(0b00000000, 1)
 
 const rl = readline.createInterface({
     input: process.stdin,
@@ -57,6 +59,7 @@ const rl = readline.createInterface({
 rl.on('line', () => {
     const halt = cpu.step();
     cpu.debug();
+    cpu.viewRAM(0b00000000, 1)
     cpu.viewNextInstruction();
     cpu.viewRAM(0b00000000);
     if (halt) {
