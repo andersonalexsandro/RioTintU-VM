@@ -29,27 +29,36 @@ const writeBytes = new Uint8Array(ROM.buffer);
 
 let i = 0;
 
-writeBytes[i++] = concat4bits(0b1111, 0b1110); 
-writeBytes[i++] = concat4bits(0b0001, Instructions.LDI); 
- 
-writeBytes[i++] = concat4bits(0b0000, 0b0001); 
-writeBytes[i++] = concat4bits(0b0010, Instructions.LDI);
+writeBytes[i++] = concat4bits(0b1111, 0b1100)
+writeBytes[i++] = concat4bits(0b1111, Instructions.LDI)
 
-writeBytes[i++] = concat4bits(0b0001, 0b0010); 
-writeBytes[i++] = concat4bits(0b0001, Instructions.ADD); 
+writeBytes[i++] = concat4bits(0b0000, 0b0000)
+writeBytes[i++] = concat4bits(0b0001, Instructions.LDI)
 
-writeBytes[i++] = concat4bits(0b0000, 0b0010); 
-writeBytes[i++] = concat4bits(Flags.NOT_COUT, Instructions.BRH); 
+writeBytes[i++] = concat4bits(0b0000, 0b0001)
+writeBytes[i++] = concat4bits(0b0010, Instructions.LDI)
 
-writeBytes[i++] = concat4bits(0b0000, 0b0000); 
-writeBytes[i++] = concat4bits(0b0010, Instructions.STR); 
+writeBytes[i++] = concat4bits(0b1111, 0b0000)
+writeBytes[i++] = concat4bits(0b0010, Instructions.STR)
 
-writeBytes[i++] = concat4bits(0b0000, 0b0000); 
-writeBytes[i++] = concat4bits(0b0000, Instructions.HLT); 
+writeBytes[i++] = concat4bits(0b0001, 0b0010)
+writeBytes[i++] = concat4bits(0b0001, Instructions.ADD)
+
+writeBytes[i++] = concat4bits(0b1111, 0b0000)
+writeBytes[i++] = concat4bits(0b0001, Instructions.STR)
+
+writeBytes[i++] = concat4bits(0b0001, 0b0010)
+writeBytes[i++] = concat4bits(0b0010, Instructions.ADD)
+
+writeBytes[i++] = concat4bits(0b0000, 0b0011)
+writeBytes[i++] = concat4bits(0b0000, Instructions.JMP)
+
+writeBytes[i++] = concat4bits(0b0000, 0b0000)
+writeBytes[i++] = concat4bits(0b0000, Instructions.HLT)
 
 cpu.debug();
 cpu.viewNextInstruction();
-cpu.viewRAM(0b00000000, 1)
+numberDisplay.log();
 
 const rl = readline.createInterface({
     input: process.stdin,
@@ -59,9 +68,8 @@ const rl = readline.createInterface({
 rl.on('line', () => {
     const halt = cpu.step();
     cpu.debug();
-    cpu.viewRAM(0b00000000, 1)
     cpu.viewNextInstruction();
-    cpu.viewRAM(0b00000000);
+    numberDisplay.log();
     if (halt) {
         console.log("Program halted.");
         rl.close();

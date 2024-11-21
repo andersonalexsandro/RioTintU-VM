@@ -25,13 +25,15 @@ class MemoryMapper {
         const region = this.findRegion(address);
         if (!region) throw new Error(`Address ${address} out of bounds`);
         const finalAddress = region.remap ? address - region.start : address;
-        return region.device.getUint8(finalAddress); // Certifique-se de que o método está correto
+        console.log(region.device.constructor.name)
+        return region.device.getUint8(finalAddress);
     }
 
     setUint8(address, value) {
         const region = this.findRegion(address);
         if (!region) throw new Error(`Address ${address} out of bounds`);
         const finalAddress = region.remap ? address - region.start : address;
+                console.log(region.device.constructor.name)
         return region.device.setUint8(finalAddress, value);
     }
 }

@@ -80,11 +80,6 @@ class Screen {
         process.stdout.write(`\x1b[${y};${x}H`);
     }
 
-    log() {
-        this.moveTo();
-        process.stdout.write('█');
-    }
-
     logScreenBuffer() {
        this.log(this.buffer)
     }
@@ -116,8 +111,3 @@ const ScreenMap = {
 };
 
 module.exports = Screen;
-
-// Exemplo de uso
-const screen = new Screen(new ArrayBuffer(256));
-screen.logScreenBuffer(); // Loga o buffer da tela no terminal
-screen.logScreen(); // Loga a tela no terminal
