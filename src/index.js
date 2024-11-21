@@ -16,6 +16,7 @@ const joystick = new DataView(RAMab, 254, 2)
 
 const memoryMapper = new MemoryMapper();
 
+memoryMapper.map(RAM, 0b00000000, 0b11110110, false)
 memoryMapper.map(screen, 0b11110110, 0b11111011, true)
 memoryMapper.map(numberDisplay, 0b11111100, 0b11111101, true)
 memoryMapper.map(joystick, 0b11111110, 0b11111111, true)
