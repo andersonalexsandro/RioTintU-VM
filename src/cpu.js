@@ -1,4 +1,4 @@
-const createMemory = require('./create-memory');
+const {createMemory} = require('./create-memory');
 const Instructions = require('./instructions');
 const Flags = require('./flags');
 const concat4bits = require('./utils');
@@ -34,11 +34,15 @@ class CPU {
         console.log();
     }
 
-    viewRAM(address, offset) {
-        let output = `RAM at address ${address} and offset ${offset}: `;
-        for (let i = 0; i < offset; i++) {
+    viewRAM(address) {
+        let output = `RAM at address ${address}: `;
+        for (let i = 0; i < 8; i++) {
             const value = this.RAM.getUint8(address + i);
-            output += `${value.toString(2).padStart('8', 0)} `;
+            if (value === undefined) {
+                output += `undefined `;
+            } else {
+                output += `${value} `;
+            }
         }
         console.log(output.trim());
     }
