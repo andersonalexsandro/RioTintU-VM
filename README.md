@@ -17,8 +17,7 @@ Runing Fibonacci sequence: [youtube](https://www.youtube.com/watch?v=nEHz9QRe7IQ
 - 8 ALU Flags (COUT, !COUT, ZERO, !ZERO, EVEN, !EVEN, MSB, !MSB)
 - 16 x 8 Bit Dual Read Register - r0 Read Only zero
 - 32 x 32 Display (Memory Maped I/O)
-- 10 Char Display (Memory Maped I/O)
-- 8 bit Display (Memory Maped I/O)
+- 16 bit Display (Memory Maped I/O)
 
 
 ### Objectives:
