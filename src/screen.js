@@ -86,24 +86,21 @@ class Screen {
     }
 
     logScreenBuffer() {
-        console.log("Screen Buffer:");
-        for (let i = 0; i < 32; i++) {
-            let row = [];
-            for (let j = 0; j < 32; j++) {
-                row.push(this.buffer[i * 32 + j] === 0b11111111 ? '1' : '0');
-            }
-            console.log(row.join(' '));
-        }
+       this.log(this.buffer)
     }
 
-    logScreen() {
+    logScreen(){
+        this.log(this.screen)
+    }
+
+    log(screen) {
         console.log("Screen:");
         for (let i = 0; i < 32; i++) {
             let row = [];
             for (let j = 0; j < 32; j++) {
-                row.push(this.screen[i * 32 + j] === 0b11111111 ? '1' : '0');
+                row.push(screen[i * 32 + j] === 0b11111111 ? '  ' : '██');
             }
-            console.log(row.join(' '));
+            console.log(row.join(''));
         }
     }
 }
