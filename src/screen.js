@@ -28,13 +28,13 @@ class Screen {
                 break;
 
             case ScreenMap.DRAW_PIXEL:
-                const pointDraw = this.getPointerIndex();
-                this.buffer[pointDraw] = 0b11111111;
+                const intersection = this.getIntersectionIndex();
+                this.buffer[intersection] = 0b11111111;
                 break;
 
             case ScreenMap.CLEAR_PIXEL:
-                const pointClear = this.getPointerIndex();
-                this.buffer[pointClear] = ScreenMap.CLEAR_COMMAND;
+                const intersectionClear = this.getIntersectionIndex();
+                this.buffer[intersectionClear] = ScreenMap.CLEAR_COMMAND;
                 break;
 
             case ScreenMap.BUFFER_SCREEN:
@@ -68,7 +68,7 @@ class Screen {
         }
     }
 
-    getPointerIndex() {
+    getIntersectionIndex() {
         const x = this.getX();
         const y = this.getY();
         const point = (y * 32) + x;
