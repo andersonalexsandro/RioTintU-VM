@@ -6,20 +6,19 @@ const concat4bits = require('./utils');
 const Flags = require('./flags');
 const MemoryMapper = require('./memory-mapper');
 const Screen = require('./screen')
+const NumberDisplay = require('./numberDisplay')
 
 const [RAMab, RAM] = createMemoryAbDv(256);
 
 const screen = new Screen(RAMab)
-const numberDisplay = new DataView(RAMab, 252, 2)
-const controller = new DataView(RAMab, 254, 2)
+const numberDisplay = new NumberDisplay(RAMab)
+const joystick = new DataView(RAMab, 254, 2)
 
 const memoryMapper = new MemoryMapper();
 
-memoryMapper.map(screen,0b11110000, 0b11110110, true)
-memoryMapper.map(charDisplay,0b11110111, 0b11111001, true)
-memoryMapper.map(numberDisplay,0b11111010, 0b11111101, true)
-memoryMapper.map(controller,11111110, 0b11111111, true)
-memoryMapper.map(RAM, 0b00000000, 0b11101111, false);
+memoryMapper.map(screen, 0b11110110, 0b11111011, true)
+memoryMapper.map(numberDisplay, 0b11111100, 0b11111101, true)
+memoryMapper.map(joystick, 0b11111110, 0b11111111, true)
 
 const ROM = createMemory(512);
 const cpu = new CPU(memoryMapper, ROM);
