@@ -2,6 +2,8 @@
 
 Inspiration to this VM - [youtube](https://www.youtube.com/playlist?list=PLP29wDx6QmW5DdwpdwHCRJsEubS5NrQ9b)
 
+GUI Desin: https://www.figma.com/design/reAwBcXTrX9SvhKPDcNfPZ/RioTintU-VM?node-id=0-1&node-type=canvas&t=g7MBf4HXQpEMsfbd-0
+
 ## 8 Bit Minecraft Computer Virtual Machine
 
 This project is a Virtual Machine to logically emulate my 8 Bit Minecraft Computer, which is based on real computational concepts.
