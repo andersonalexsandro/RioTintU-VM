@@ -2,7 +2,7 @@
 
 Inspiration to this VM - [youtube](https://www.youtube.com/playlist?list=PLP29wDx6QmW5DdwpdwHCRJsEubS5NrQ9b)
 
-GUI Desin: https://www.figma.com/design/reAwBcXTrX9SvhKPDcNfPZ/RioTintU-VM?node-id=0-1&node-type=canvas&t=g7MBf4HXQpEMsfbd-0
+GUI: [Design](https://www.figma.com/design/reAwBcXTrX9SvhKPDcNfPZ/RioTintU-VM?node-id=0-1&node-type=canvas&t=g7MBf4HXQpEMsfbd-0)
 
 ## 8 Bit Minecraft Computer Virtual Machine
 
