@@ -2,6 +2,8 @@
 
 Inspiration to this VM - [youtube](https://www.youtube.com/playlist?list=PLP29wDx6QmW5DdwpdwHCRJsEubS5NrQ9b)
 
+GUI: [Design](https://www.figma.com/design/reAwBcXTrX9SvhKPDcNfPZ/RioTintU-VM?node-id=0-1&node-type=canvas&t=g7MBf4HXQpEMsfbd-0)
+
 ## 8 Bit Minecraft Computer Virtual Machine
 
 This project is a Virtual Machine to logically emulate my 8 Bit Minecraft Computer, which is based on real computational concepts.
@@ -17,8 +19,7 @@ Runing Fibonacci sequence: [youtube](https://www.youtube.com/watch?v=nEHz9QRe7IQ
 - 8 ALU Flags (COUT, !COUT, ZERO, !ZERO, EVEN, !EVEN, MSB, !MSB)
 - 16 x 8 Bit Dual Read Register - r0 Read Only zero
 - 32 x 32 Display (Memory Maped I/O)
-- 10 Char Display (Memory Maped I/O)
-- 8 bit Display (Memory Maped I/O)
+- 16 bit Number Display (Memory Maped I/O)
 
 
 ### Objectives:
