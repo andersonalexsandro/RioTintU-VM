@@ -1,0 +1,12 @@
+{
+  "name": "vm",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "tsc",
+    "start": "node build/index.js",
+    "build-and-start": "npm run build && npm run start"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2"
+  }
+}
