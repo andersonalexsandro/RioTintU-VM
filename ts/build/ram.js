@@ -1,8 +1,9 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 class Ram {
-    constructor(lenghtInBytes) {
-        this.lenghtInBytes = lenghtInBytes;
-        this.arrayBuffer = new ArrayBuffer(lenghtInBytes);
+    constructor(lengthInBytes) {
+        this.lengthInBytes = lengthInBytes;
+        this.arrayBuffer = new ArrayBuffer(lengthInBytes);
         this.dataView = new DataView(this.arrayBuffer);
     }
     getArrayBuffer() {
@@ -11,8 +12,8 @@ class Ram {
     getDataView() {
         return this.dataView;
     }
-    getLenghtInBytes() {
-        return this.lenghtInBytes;
+    getLengthInBytes() {
+        return this.lengthInBytes;
     }
     getValue(addres) {
         return this.dataView.getUint8(addres);
@@ -22,9 +23,10 @@ class Ram {
     }
     toString() {
         let toString = '';
-        for (let i = 0; i < this.lenghtInBytes; i++) {
+        for (let i = 0; i < this.lengthInBytes; i++) {
             toString += `${i}: ${this.getValue(i)}\n`;
         }
         return toString;
     }
 }
+exports.default = Ram;

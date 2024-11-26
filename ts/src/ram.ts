@@ -1,12 +1,12 @@
 class Ram {
 
-    private lenghtInBytes: number; 
+    private lengthInBytes: number; 
     private arrayBuffer; // pure Array of bytes (dont have methods to deal with)
     private dataView; // manipulate the arrayBuffer
 
-    constructor(lenghtInBytes: number){
-        this.lenghtInBytes = lenghtInBytes;
-        this.arrayBuffer = new ArrayBuffer(lenghtInBytes);
+    constructor(lengthInBytes: number){
+        this.lengthInBytes = lengthInBytes;
+        this.arrayBuffer = new ArrayBuffer(lengthInBytes);
         this.dataView = new DataView(this.arrayBuffer);
     }
 
@@ -18,8 +18,8 @@ class Ram {
         return this.dataView;
     }
 
-    public getLenghtInBytes(): number{
-        return this.lenghtInBytes;
+    public getLengthInBytes(): number{
+        return this.lengthInBytes;
     }
 
     public getValue(addres: number){
@@ -32,9 +32,11 @@ class Ram {
 
     public toString(): string{
         let toString: string = '';
-        for(let i=0; i< this.lenghtInBytes; i++){
+        for(let i=0; i< this.lengthInBytes; i++){
             toString+= `${i}: ${this.getValue(i)}\n`
         } 
         return toString;
     }
 }
+
+export default Ram;
