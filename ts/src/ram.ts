@@ -26,7 +26,7 @@ class Ram {
         return this.dataView.getUint8(addres);
     }
 
-    public setValue(addres: number, value: number){
+    public setValue(addres: number, value: number): void{
         return this.dataView.setUint8(addres, value)
     }
 
