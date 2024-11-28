@@ -1,4 +1,4 @@
-class Ram {
+export default class Ram {
 
     private lengthInBytes: number; 
     private arrayBuffer; // pure Array of bytes (dont have methods to deal with)
@@ -38,5 +38,3 @@ class Ram {
         return toString;
     }
 }
-
-export default Ram;
