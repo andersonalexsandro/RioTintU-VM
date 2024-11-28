@@ -1,12 +1,12 @@
 import Ram from "./ram";
 
 export enum ReservedAddress{
-    CLEAR_SCREEN_BUFFER= 0b00000000,
-    PUSH_SCREEN_BUFFER= 0b00000001,
-    CLEAR_PIXEL= 0b00000010,
-    DRAW_PIXEL= 0b00000011,
-    PIXEL_X= 0b00000100,
-    PIXEL_Y= 0b00000101
+    CLEAR_SCREEN_BUFFER= 0,
+    PUSH_SCREEN_BUFFER= 1,
+    CLEAR_PIXEL= 2,
+    DRAW_PIXEL= 3,
+    PIXEL_X= 4,
+    PIXEL_Y= 5
 }
 
 export default class Screen{
