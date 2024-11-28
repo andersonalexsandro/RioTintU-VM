@@ -35,7 +35,7 @@ test("Buffer Bytelength", () => {
     expect(screen.getScreen().byteLength).toBe(width * height)
 })
 
-test("Should share ram space from 246 until 251 inside ramAlocatedSpace", () => {
+test("Must share ram space from 246 until 251 inside ramAlocatedSpace", () => {
     for(let i=0; i<Screen.nBytesAlocated; i++){
         ram.setValue(initialAddress + i, 255) // 0b11111111
         expect(screen.getRamAlocatedSpace().getUint8(i)).toBe(255) // 0b11111111
