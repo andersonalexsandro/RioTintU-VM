@@ -1,6 +1,6 @@
 import Ram from "./ram";
 
-class NumberDisplay implements Memory{
+export default class NumberDisplay implements Memory{
 
     public static readonly nBytesAlocated = 2; //16 bits to display
 
@@ -25,5 +25,4 @@ class NumberDisplay implements Memory{
     public toString(): string{
         return("Display: " + this.display.getUint16(0, true)) //Little-endian true: low 8bits are in the first index
     }
-
 }
