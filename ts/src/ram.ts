@@ -1,4 +1,4 @@
-export default class Ram {
+export default class Ram implements Memory{
 
     private lengthInBytes: number; 
     private arrayBuffer; // pure Array of bytes (dont have methods to deal with)

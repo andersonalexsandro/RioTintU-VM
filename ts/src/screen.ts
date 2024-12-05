@@ -9,7 +9,7 @@ export enum ReservedAddress{
     PIXEL_Y= 5
 }
 
-export default class Screen{
+export default class Screen implements Memory{
 
     // Number of bytes alocated in the RAM: 246, 247, ..., 251 indexes (ISA Documentation). 
     // It is about how many address are reserved to I/O comunitcation
