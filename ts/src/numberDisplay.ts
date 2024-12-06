@@ -22,6 +22,10 @@ export default class NumberDisplay implements Memory{
         return 0;
     }
 
+    public getramAlocated(): DataView{
+        return this.ramAlocated;
+    }
+
     public toString(): string{
         return("Display: " + this.display.getUint16(0, true)) //Little-endian true: low 8bits are in the first index
     }
