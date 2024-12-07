@@ -24,9 +24,9 @@ test("must share ram speace 252 and 253", () =>{
 
 test("Display Number", () =>{
     // 16 Bit biggest number
-    for(let i=0; i<=65536; i++){
-        if(i < 256) numberDisplay.setValue(252, i);
-        if(i >= 256) numberDisplay.setValue(253, i);
+    for(let i=0; i<=65535; i++){
+        ram.setValue(252, i & 255);
+        ram.setValue(253, i >> 8 & 255);
         expect(numberDisplay.toString()).toBe("Display: " + i);
     }
 });
