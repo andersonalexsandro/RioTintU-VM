@@ -37,7 +37,7 @@ test("Buffer Bytelength", () => {
 
 test("Must share ram space from 246 until 251 inside ramAlocatedSpace", () => {
     for(let i=0; i<Screen.nBytesAlocated; i++){
-        ram.setValue(initialAddress + i, 255) // 0b11111111
+        ram.set(initialAddress + i, 255) // 0b11111111
         expect(screen.getRamAlocatedSpace().getUint8(i)).toBe(255) // 0b11111111
     }
 });
@@ -57,12 +57,12 @@ test("screen content", () =>{
 })
 
 test("X value", () =>{
-    screen.setValue(ReservedAddress.PIXEL_X, 255);
+    screen.set(ReservedAddress.PIXEL_X, 255);
     expect(screen.getX()).toBe(255);
 })
 
 test("Y value", () =>{
-    screen.setValue(ReservedAddress.PIXEL_Y, 255);
+    screen.set(ReservedAddress.PIXEL_Y, 255);
     expect(screen.getY()).toBe(255);
 })
 
@@ -79,10 +79,10 @@ test("Draw Pixel at Buffer", () =>{
 test("Clear Pixel at Buffer", () =>{
     fulFillBuffer();
     for(let i=0; i < height; i++){
-        screen.setValue(ReservedAddress.PIXEL_Y, i);
+        screen.set(ReservedAddress.PIXEL_Y, i);
         for(let j=0; j<width; j++){
-            screen.setValue(ReservedAddress.PIXEL_X, j);
-            screen.setValue(ReservedAddress.CLEAR_PIXEL);
+            screen.set(ReservedAddress.PIXEL_X, j);
+            screen.set(ReservedAddress.CLEAR_PIXEL);
         }
     }
     testItsClear();
@@ -90,13 +90,13 @@ test("Clear Pixel at Buffer", () =>{
 
 test("Clear Buffer", () =>{
     fulFillBuffer();
-    screen.setValue(ReservedAddress.CLEAR_SCREEN_BUFFER);
+    screen.set(ReservedAddress.CLEAR_SCREEN_BUFFER);
     testItsClear();
 })
 
 test("Push Buffer", () => {
     fulFillBuffer();
-    screen.setValue(ReservedAddress.PUSH_SCREEN_BUFFER);
+    screen.set(ReservedAddress.PUSH_SCREEN_BUFFER);
     for(let i=0; i< height; i++){
         for(let j=0; j<width; j++){
             expect(screen.getScreen()[(i * width) + j]).toBe(255);
@@ -107,16 +107,16 @@ test("Push Buffer", () => {
 test("Draw, Push, Clear, Push", () =>{
     testItsClear();
     for(let i=0; i < height; i++){
-        screen.setValue(ReservedAddress.PIXEL_Y, i);
+        screen.set(ReservedAddress.PIXEL_Y, i);
         for(let j=0; j<width; j++){
-            screen.setValue(ReservedAddress.PIXEL_X, j);
+            screen.set(ReservedAddress.PIXEL_X, j);
 
-            screen.setValue(ReservedAddress.DRAW_PIXEL);
-            screen.setValue(ReservedAddress.PUSH_SCREEN_BUFFER);
+            screen.set(ReservedAddress.DRAW_PIXEL);
+            screen.set(ReservedAddress.PUSH_SCREEN_BUFFER);
             expect(screen.getScreen()[(i * width) + j]).toBe(255);
             
-            screen.setValue(ReservedAddress.CLEAR_PIXEL);
-            screen.setValue(ReservedAddress.PUSH_SCREEN_BUFFER);
+            screen.set(ReservedAddress.CLEAR_PIXEL);
+            screen.set(ReservedAddress.PUSH_SCREEN_BUFFER);
             expect(screen.getScreen()[(i * width) + j]).toBe(0);
         }
     }
@@ -133,10 +133,10 @@ function testItsClear(){
 
 function fulFillBuffer(){
     for(let i=0; i < height; i++){
-        screen.setValue(ReservedAddress.PIXEL_Y, i);
+        screen.set(ReservedAddress.PIXEL_Y, i);
         for(let j=0; j<width; j++){
-            screen.setValue(ReservedAddress.PIXEL_X, j);
-            screen.setValue(ReservedAddress.DRAW_PIXEL);
+            screen.set(ReservedAddress.PIXEL_X, j);
+            screen.set(ReservedAddress.DRAW_PIXEL);
         }
     }
 };

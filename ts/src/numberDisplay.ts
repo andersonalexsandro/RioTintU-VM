@@ -12,11 +12,11 @@ export default class NumberDisplay implements Memory{
         this.ramAlocated = new DataView(this.ram.getArrayBuffer(), initialAddress, NumberDisplay.nBytesAlocated);;        
     }
 
-    public setValue(addres: number, value: number): void{
+    public set(addres: number, value: number): void{
         this.ramAlocated.setUint8(addres, value);
     }
 
-    public getValue(addres: number): number{
+    public get(addres: number): number{
         return 0;
     }
 

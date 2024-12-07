@@ -22,18 +22,18 @@ export default class Ram implements Memory{
         return this.lengthInBytes;
     }
 
-    public getValue(addres: number){
+    public get(addres: number){
         return this.dataView.getUint8(addres);
     }
 
-    public setValue(addres: number, value: number): void{
+    public set(addres: number, value: number): void{
         return this.dataView.setUint8(addres, value)
     }
 
     public toString(): string{
         let toString: string = '';
         for(let i=0; i< this.lengthInBytes; i++){
-            toString+= `${i}: ${this.getValue(i)}\n`
+            toString+= `${i}: ${this.get(i)}\n`
         } 
         return toString;
     }

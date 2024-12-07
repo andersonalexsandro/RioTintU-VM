@@ -1,4 +1,4 @@
 interface Memory{
-    getValue(address: number): number
-    setValue(addres: number, value: number): void
+    get(address: number): number
+    set(addres: number, value: number): void
 }

@@ -55,11 +55,11 @@ export default class Screen implements Memory{
         return this.buffer;
     }
 
-    public getValue(address: number): number{
+    public get(address: number): number{
         return 0;
     }
 
-    public setValue(address: number, value: number=0): void{
+    public set(address: number, value: number=0): void{
         switch(address) {
             case ReservedAddress.PIXEL_X:
                 this.ramAlocatedSpace.setUint8(address, value);

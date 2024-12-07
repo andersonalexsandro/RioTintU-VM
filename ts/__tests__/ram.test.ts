@@ -15,15 +15,15 @@ test("should return the correct length in bytes", () => {
 
 test('Verify set and get of every single Address', () => {
     for (let i = 0; i < length; i++) {
-        ram.setValue(i, i);
-        expect(ram.getValue(i)).toBe(i);
+        ram.set(i, i);
+        expect(ram.get(i)).toBe(i);
         
-        ram.setValue(i, 0b11111111);
-        expect(ram.getValue(i)).toBe(0b11111111);
+        ram.set(i, 0b11111111);
+        expect(ram.get(i)).toBe(0b11111111);
     }
 });
 
 test('Test out of bounds', () => {
-    expect(() => ram.setValue(256, 0b11111111)).toThrowError(); //ram goes from 0 until 255
-    expect(() => ram.setValue(-1, 0b11111111)).toThrowError();
+    expect(() => ram.set(256, 0b11111111)).toThrowError(); //ram goes from 0 until 255
+    expect(() => ram.set(-1, 0b11111111)).toThrowError();
 });
