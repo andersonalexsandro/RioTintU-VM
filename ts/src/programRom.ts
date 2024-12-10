@@ -1,12 +1,12 @@
-class ProgramRom16{
+export default class ProgramRom16{
 
     private romAb: ArrayBuffer; // Pure array of Bytes, dont has methods to deal with
     private rom: DataView;  // Visualize and manipulate ArrayBuffer
     private lengthInBytes: number;
 
-    constructor(nBytes: number){
-        this.lengthInBytes = nBytes;
-        this.romAb = new ArrayBuffer(nBytes);
+    constructor(lengthInBytes: number){
+        this.lengthInBytes = lengthInBytes;
+        this.romAb = new ArrayBuffer(lengthInBytes);
         this.rom = new DataView(this.romAb);
     }
 
@@ -19,8 +19,8 @@ class ProgramRom16{
     }
     
     public setHighLowBits(address: number, high8: number, low8: number): void {
-        this.rom.setUint8(address, high8);
-        this.rom.setUint8(address + 1, low8)
+        this.rom.setUint8(address * 2, high8);
+        this.rom.setUint8(address * 2 + 1, low8)
     }
 
     public toString(): string{

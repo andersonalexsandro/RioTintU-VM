@@ -33,10 +33,10 @@ class Screen {
     getBuffer() {
         return this.buffer;
     }
-    getValue(address) {
+    get(address) {
         return 0;
     }
-    setValue(address, value = 0) {
+    set(address, value = 0) {
         switch (address) {
             case ReservedAddress.PIXEL_X:
                 this.ramAlocatedSpace.setUint8(address, value);

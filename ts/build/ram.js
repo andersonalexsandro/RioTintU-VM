@@ -15,16 +15,16 @@ class Ram {
     getLengthInBytes() {
         return this.lengthInBytes;
     }
-    getValue(addres) {
+    get(addres) {
         return this.dataView.getUint8(addres);
     }
-    setValue(addres, value) {
+    set(addres, value) {
         return this.dataView.setUint8(addres, value);
     }
     toString() {
         let toString = '';
         for (let i = 0; i < this.lengthInBytes; i++) {
-            toString += `${i}: ${this.getValue(i)}\n`;
+            toString += `${i}: ${this.get(i)}\n`;
         }
         return toString;
     }

@@ -6,10 +6,10 @@ class NumberDisplay {
         this.ramAlocated = new DataView(this.ram.getArrayBuffer(), initialAddress, NumberDisplay.nBytesAlocated);
         ;
     }
-    setValue(addres, value) {
+    set(addres, value) {
         this.ramAlocated.setUint8(addres, value);
     }
-    getValue(addres) {
+    get(addres) {
         return 0;
     }
     getramAlocated() {
