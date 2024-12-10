@@ -1,5 +1,5 @@
 import {describe, expect, test, beforeEach} from '@jest/globals';
-import ProgramRom16  from '../src/programRom'
+import ProgramRom16  from '../src/programRom16'
 
 const length: number = 512;
 const romTotalAddresses = 256;

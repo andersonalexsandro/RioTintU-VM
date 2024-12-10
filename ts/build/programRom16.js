@@ -1,8 +1,9 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 class ProgramRom16 {
-    constructor(nBytes) {
-        this.lengthInBytes = nBytes;
-        this.romAb = new ArrayBuffer(nBytes);
+    constructor(lengthInBytes) {
+        this.lengthInBytes = lengthInBytes;
+        this.romAb = new ArrayBuffer(lengthInBytes);
         this.rom = new DataView(this.romAb);
     }
     get16(address) {
@@ -12,8 +13,8 @@ class ProgramRom16 {
         this.rom.setUint16(address * 2, value);
     }
     setHighLowBits(address, high8, low8) {
-        this.rom.setUint8(address, high8);
-        this.rom.setUint8(address + 1, low8);
+        this.rom.setUint8(address * 2, high8);
+        this.rom.setUint8(address * 2 + 1, low8);
     }
     toString() {
         let toString = '';
@@ -23,3 +24,4 @@ class ProgramRom16 {
         return toString;
     }
 }
+exports.default = ProgramRom16;
