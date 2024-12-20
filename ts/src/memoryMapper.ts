@@ -1,40 +1,43 @@
-class MemoryMapper {
-    constructor() {
+interface Region {
+    device: Memory;
+    start: number;
+    end: number;
+    remap: boolean;
+}
+
+export default class MemoryMapper implements Memory{
+    
+    private regions: Array<Region>
+
+    constructor () {
         this.regions = [];
     }
 
-    map(device, start, end, remap = true) {
+    map(device: Memory, start: number, end: number, remap = true) {
         const region = {
             device,
             start,
             end,
             remap
         };
-        this.regions.unshift(region);
-
-        return () => {
-            this.regions = this.regions.filter(x => x !== region);
-        };
+        this.regions.push(region)
     }
 
-    findRegion(address) {
+    findRegion(address: number) {
         return this.regions.find(r => address >= r.start && address <= r.end);
     }
 
-    getUint8(address) {
+    get(address: number): number{
         const region = this.findRegion(address);
         if (!region) throw new Error(`Address ${address} out of bounds`);
         const finalAddress = region.remap ? address - region.start : address;
-        return region.device.getUint8(finalAddress);
+        return region.device.get(finalAddress);
     }
 
-    setUint8(address, value) {
+    set(address: number, value: number): void {
         const region = this.findRegion(address);
         if (!region) throw new Error(`Address ${address} out of bounds`);
         const finalAddress = region.remap ? address - region.start : address;
-                console.log(region.device.constructor.name)
-        return region.device.setUint8(finalAddress, value);
+        region.device.set(finalAddress, value);
     }
 }
-
-module.exports = MemoryMapper;
