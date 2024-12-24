@@ -23,8 +23,10 @@ export default class MemoryMapper implements Memory{
         this.regions.push(region)
     }
 
-    findRegion(address: number) {
-        return this.regions.find(r => address >= r.start && address <= r.end);
+    findRegion(address: number): Region {
+        const region = this.regions.find(r => address >= r.start && address <= r.end);
+        if (!region) throw new Error(`Region not found for address ${address}`);
+        return region;
     }
 
     get(address: number): number{
@@ -39,5 +41,11 @@ export default class MemoryMapper implements Memory{
         if (!region) throw new Error(`Address ${address} out of bounds`);
         const finalAddress = region.remap ? address - region.start : address;
         region.device.set(finalAddress, value);
+    }
+
+    toString(): string {
+        return this.regions.map(region => 
+            `Device: ${region.device.constructor.name}, Start: ${region.start}, End: ${region.end}, Remap: ${region.remap}`
+        ).join('\n');
     }
 }

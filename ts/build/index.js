@@ -3,17 +3,24 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const memoryMapper_1 = __importDefault(require("./memoryMapper"));
 const numberDisplay_1 = __importDefault(require("./numberDisplay"));
 const ram_1 = __importDefault(require("./ram"));
-const ram = new ram_1.default(256);
-const numberDisplay = new numberDisplay_1.default(ram, 252);
-ram.set(252, 0);
-ram.set(253, 0b0000001);
-console.log(numberDisplay.toString());
-for (let i = 0; i <= 300; i++) {
-    if (i <= 256)
-        ram.set(252, i & 255);
-    if (i >= 256)
-        ram.set(253, i >> 8 & 255);
-    console.log(numberDisplay.toString());
-}
+const screen_1 = __importDefault(require("./screen"));
+let memoryMapper;
+let screen;
+let numberDisplay;
+let ram;
+const ramLength = 256;
+const screenStart = 246;
+const screenWidth = 32;
+const screenHeigth = 32;
+const numberDisplayStart = 252;
+ram = new ram_1.default(ramLength);
+screen = new screen_1.default(ram, screenStart, screenWidth, screenHeigth);
+numberDisplay = new numberDisplay_1.default(ram, numberDisplayStart);
+memoryMapper = new memoryMapper_1.default();
+memoryMapper.map(ram, 0, screenStart - 1, false);
+memoryMapper.map(screen, screenStart, screenStart + screen_1.default.nBytesAlocated - 1, true);
+memoryMapper.map(numberDisplay, numberDisplayStart, numberDisplayStart + numberDisplay_1.default.nBytesAlocated - 1, true);
+console.log(memoryMapper);

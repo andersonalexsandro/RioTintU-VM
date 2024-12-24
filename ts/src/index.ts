@@ -1,16 +1,29 @@
+import MemoryMapper from "./memoryMapper";
 import NumberDisplay from "./numberDisplay";
 import Ram from "./ram";
+import Screen from "./screen";
+
+let memoryMapper: MemoryMapper;
+let screen: Screen;
+let numberDisplay: NumberDisplay;
+let ram: Ram;
+
+const ramLength = 256;
+
+const screenStart = 246;
+const screenWidth = 32;
+const screenHeigth = 32;
+
+const numberDisplayStart = 252
 
 
-const ram = new Ram(256);
-const numberDisplay = new NumberDisplay(ram, 252);
+ram = new Ram(ramLength);
+screen = new Screen(ram, screenStart, screenWidth, screenHeigth);
+numberDisplay = new NumberDisplay(ram, numberDisplayStart);
+memoryMapper = new MemoryMapper();
 
-ram.set(252, 0);
-ram.set(253, 0b0000001);
-console.log(numberDisplay.toString())
+memoryMapper.map(ram, 0, screenStart - 1, false);
+memoryMapper.map(screen, screenStart, screenStart + Screen.nBytesAlocated - 1, true);
+memoryMapper.map(numberDisplay, numberDisplayStart, numberDisplayStart + NumberDisplay.nBytesAlocated - 1, true); 
 
-for(let i=0; i<=300; i++){
-    if(i <= 256) ram.set(252, i & 255);
-    if(i >= 256) ram.set(253, i >> 8 & 255);
-    console.log(numberDisplay.toString())
-}
+console.log(memoryMapper);
