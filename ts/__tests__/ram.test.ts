@@ -1,5 +1,4 @@
-
-import {describe, expect, test, beforeEach} from '@jest/globals';
+import { expect, test, beforeEach } from '@jest/globals';
 import Ram  from '../src/ram'
 
 const length: number = 256
