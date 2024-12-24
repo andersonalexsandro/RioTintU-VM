@@ -1,8 +1,8 @@
 export default class Ram implements Memory{
 
     private lengthInBytes: number; 
-    private arrayBuffer; // pure Array of bytes (dont have methods to deal with)
-    private dataView; // manipulate the arrayBuffer
+    private arrayBuffer: ArrayBuffer; // pure Array of bytes (dont have methods to deal with)
+    private dataView: DataView; // manipulate the arrayBuffer
 
     constructor(lengthInBytes: number){
         this.lengthInBytes = lengthInBytes;
