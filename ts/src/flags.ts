@@ -43,11 +43,12 @@ export class Flags {
         this.even = value;
     }
 
-    setFlags(result: number){
-        this.cout = result > 0b11111111;
-        this.zero = result === 0b00000000;
-        this.even = (result % 2) === 0;
-        this.msb = (result & 0b10000000) !== 0;
+    setFlags(result: number): void {
+        const maskedResult = result & 0b11111111; 
+        this.cout = (result & 0b100000000)!== 0;
+        this.zero = maskedResult === 0b00000000;
+        this.even = (maskedResult % 2) === 0;
+        this.msb = (maskedResult & 0b10000000) !== 0;
     }
 
     toString(): string {
