@@ -29,3 +29,17 @@ beforeEach(() =>{
     memoryMapper.map(numberDisplay, numberDisplayStart, numberDisplayStart + NumberDisplay.nBytesAlocated - 1, true); 
 });
 
+test("Get each device", () => {
+
+    expect(ram.getArrayBuffer().byteLength).toBe(ramLength);
+
+    for (let i = 0; i < ramLength; i++) {
+        const region = memoryMapper.findRegion(i);
+        expect(region?.device instanceof Ram).toBe(true);
+    }
+
+    for (let i = 0; i < Screen.nBytesAlocated; i++){
+        const region = memoryMapper.findRegion(screenStart + i);
+        expect(region?.device instanceof Screen).toBe(true);
+    }
+});
