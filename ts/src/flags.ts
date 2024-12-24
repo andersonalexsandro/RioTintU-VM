@@ -43,6 +43,13 @@ export class Flags {
         this.even = value;
     }
 
+    setFlags(result: number){
+        this.cout = result > 0b11111111;
+        this.zero = result === 0b00000000;
+        this.even = (result % 2) === 0;
+        this.msb = (result & 0b10000000) !== 0;
+    }
+
     toString(): string {
         return `Flags: { zero: ${this.zero}, cout: ${this.cout}, msb: ${this.msb}, even: ${this.even} }`;
     }
