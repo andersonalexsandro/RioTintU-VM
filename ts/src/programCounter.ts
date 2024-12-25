@@ -12,8 +12,13 @@ export class ProgramCounter {
     public incremment(): void{
         this.counter++;
     }
+    
+    public getCounter(){
+        return this.counter;
+    }
 
     public toString(){
         return "Program Counter: " + this.counter
     }
+
 }

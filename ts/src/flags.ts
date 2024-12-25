@@ -1,3 +1,15 @@
+
+export enum FlagCode{
+    ZERO = 0,
+    NOT_ZERO = 1,
+    COUT = 2,
+    NOT_COUT = 3,
+    MSB = 4,
+    NOT_MSB = 5,
+    EVEN = 6,
+    NOT_EVEN = 7
+}
+
 export class Flags {
     private zero: boolean;
     private cout: boolean;
