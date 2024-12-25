@@ -38,6 +38,16 @@ export default class CPU {
         this.pc = pc;
     }
 
+    step() {
+        const instruction = this.fetch();
+        return this.execute(instruction);
+    }
+    
+    run() {
+        const halt = this.step();
+        if (!halt) setImmediate(() => this.run());
+    }
+
     public fetch(): number {
         const nexInstrucionAddress = (this.pc.getCounter() * 2);
         const instruction = this.rom.get16(nexInstrucionAddress);
@@ -48,23 +58,54 @@ export default class CPU {
         const [A, B, C, OPCODE] = this.splitArgs(instruction);
 
         switch (OPCODE) {
-            case Instructions.NOP:  break;
-            case Instructions.HLT:  return true;
-            case Instructions.ADD:  this.add(C, A, B);
-            case Instructions.SUB:  this.sub(C, A, B);
-            case Instructions.SUB:  this.nor(C, A, B);
-            case Instructions.AND:  this.and(C, A, B);
-            case Instructions.XOR:  this.xor(C, A, B);
-            case Instructions.RSH:  this.rsh(C, A);
-            case Instructions.LDI:  this.ldi(C, A, B);
-            case Instructions.ADI:  this.adi(C, A, B);
-            case Instructions.BRH:  this.brh(C, A, B);
-            case Instructions.JMP:  this.jmp(A, B);
-            case Instructions.JID:  this.jid(C, A, B);
-            case Instructions.ADC:  this.adc(C, A, B);
-            case Instructions.LOD:  this.lod(C, A, B);
-            case Instructions.STR:  this.str(C, A, B);
-            return false;
+            case Instructions.NOP:
+                break;
+            case Instructions.HLT:
+                return true;
+            case Instructions.ADD:
+                this.add(C, A, B);
+                break;
+            case Instructions.SUB:
+                this.sub(C, A, B);
+                break;
+            case Instructions.NOR:
+                this.nor(C, A, B);
+                break;
+            case Instructions.AND:
+                this.and(C, A, B);
+                break;
+            case Instructions.XOR:
+                this.xor(C, A, B);
+                break;
+            case Instructions.RSH:
+                this.rsh(C, A);
+                break;
+            case Instructions.LDI:
+                this.ldi(C, A, B);
+                break;
+            case Instructions.ADI:
+                this.adi(C, A, B);
+                break;
+            case Instructions.BRH:
+                this.brh(C, A, B);
+                break;
+            case Instructions.JMP:
+                this.jmp(A, B);
+                break;
+            case Instructions.JID:
+                this.jid(C, A, B);
+                break;
+            case Instructions.ADC:
+                this.adc(C, A, B);
+                break;
+            case Instructions.LOD:
+                this.lod(C, A, B);
+                break;
+            case Instructions.STR:
+                this.str(C, A, B);
+                break;
+            default:
+                return false;
         }
     }
 
@@ -141,14 +182,30 @@ export default class CPU {
         const flag = C & 0b0111;
         let doJump = false;
         switch(flag) {
-            case (FlagCode.ZERO):     doJump = this.flags.getZero();
-            case (FlagCode.NOT_ZERO): doJump = !this.flags.getZero();
-            case (FlagCode.COUT):     doJump = this.flags.getCout();
-            case (FlagCode.NOT_COUT): doJump = !this.flags.getCout();
-            case (FlagCode.MSB):      doJump = this.flags.getMsb();
-            case (FlagCode.NOT_MSB):  doJump = !this.flags.getMsb();
-            case (FlagCode.EVEN):     doJump = this.flags.getEven();
-            case (FlagCode.NOT_EVEN): doJump = !this.flags.getEven();
+            case FlagCode.ZERO:
+                doJump = this.flags.getZero();
+                break;
+            case FlagCode.NOT_ZERO:
+                doJump = !this.flags.getZero();
+                break;
+            case FlagCode.COUT:
+                doJump = this.flags.getCout();
+                break;
+            case FlagCode.NOT_COUT:
+                doJump = !this.flags.getCout();
+                break;
+            case FlagCode.MSB:
+                doJump = this.flags.getMsb();
+                break;
+            case FlagCode.NOT_MSB:
+                doJump = !this.flags.getMsb();
+                break;
+            case FlagCode.EVEN:
+                doJump = this.flags.getEven();
+                break;
+            case FlagCode.NOT_EVEN:
+                doJump = !this.flags.getEven();
+                break;
         }
         doJump ? this.pc.jump(immediateJumpAddress) : this.pc.incremment();
     }
