@@ -5,12 +5,16 @@ export class Registers implements Memory {
     private arrayBuffer: ArrayBuffer;
     private dataView: DataView;
 
-    constructor(registerNames: string[]){
-        this.registerNames = registerNames;
-        this.arrayBuffer = new ArrayBuffer(this.registerNames.length);
+    constructor(lengthInBytes: number){
+        this.arrayBuffer = new ArrayBuffer(lengthInBytes);
         this.dataView = new DataView(this.arrayBuffer);
+        this.registerMap = {}
+        this.registerNames = [];
 
-        this.registerMap = {};
+    }
+
+    setRegisterNames(registerNames: string[]){
+        this.registerNames = registerNames;
         for (let i=0; i< registerNames.length; i++){
             this.registerMap[registerNames[i]] = i;
         }

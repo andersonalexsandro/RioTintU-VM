@@ -1,4 +1,5 @@
 import { Registers } from '../src/registers';
+import { describe, expect, test, beforeEach, it } from '@jest/globals';
 
 describe('Registers', () => {
   let registers: Registers;
@@ -6,7 +7,8 @@ describe('Registers', () => {
   beforeEach(() => {
     // Inicializando registradores de r0 a r15
     const registerNames = Array.from({ length: 16 }, (_, i) => `r${i}`);
-    registers = new Registers(registerNames);
+    registers = new Registers(16);
+    registers.setRegisterNames(registerNames);
   });
 
   it('should initialize all registers to 0', () => {
