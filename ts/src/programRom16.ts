@@ -23,6 +23,12 @@ export default class ProgramRom16{
         this.rom.setUint8(address * 2 + 1, low8)
     }
 
+    public setPer4Bits(address:  number, bits1: number, bits2: number, bits3: number, bits4: number){
+        const highBits = (bits1 << 4) | bits2;
+        const lowBits = (bits3 << 4) | bits4;
+        this.setHighLowBits(address, highBits, lowBits); 
+    }
+
     public toString(): string{
         let toString: string = '';
         for(let i=0; i< this.lengthInBytes; i++){

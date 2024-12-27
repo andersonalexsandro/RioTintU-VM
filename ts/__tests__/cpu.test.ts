@@ -15,7 +15,10 @@ describe('CPU', () =>{
     const screenStart = 246;
     const screenWidth = 32;
     const screenHeigth = 32;
-    const numberDisplayStart = 252
+    const numberDisplayStart = 252;
+    const romLength = 512;
+    const registersLength = 16;
+
     let cpu: CPU;
     let ram: Ram;
     let rom: ProgramRom16;
@@ -27,8 +30,8 @@ describe('CPU', () =>{
     let memoryMapper: MemoryMapper;
 
     beforeEach(() =>{
-        rom = new ProgramRom16(512);
-        registers = new Registers(16);
+        rom = new ProgramRom16(romLength);
+        registers = new Registers(registersLength);
         flags = new Flags();
         pc = new ProgramCounter();
         ram = new Ram(ramLength);
@@ -44,7 +47,6 @@ describe('CPU', () =>{
         cpu = new CPU(memoryMapper, rom, registers, flags, pc);
 
         test('fetch instructions', () =>{
-            
         }
     }) 
 })

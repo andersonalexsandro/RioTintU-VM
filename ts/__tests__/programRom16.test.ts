@@ -1,30 +1,43 @@
-import {describe, expect, test, beforeEach} from '@jest/globals';
-import ProgramRom16  from '../src/programRom16'
+import { describe, expect, test, beforeEach } from '@jest/globals';
+import ProgramRom16 from '../src/programRom16';
+import { ProgramCounter } from '../src/programCounter';
 
 const length: number = 512;
 const romTotalAddresses = 256;
-const initialProgramCounter = 0;
-let pc: number;
+let pc: ProgramCounter;
 let rom: ProgramRom16;
 
-beforeEach(() => {
-    rom = new ProgramRom16(length);
-    pc = initialProgramCounter;
+describe('ProgramRom16', () => {
+    beforeEach(() => {
+        rom = new ProgramRom16(length);
+        pc = new ProgramCounter();
+    });
+
+    test('should set and get the next instruction correctly', () => {
+        for (let i = 0; i < romTotalAddresses; i++) {
+            rom.set16(pc.getCounter(), i);
+            expect(rom.get16(i)).toBe(i);
+            pc.incremment();
+        }
+    });
+
+    test('should set and get high and low bits correctly', () => {
+        for (let i = 0; i <= 65535; i++) {
+            let low = (i & 255);
+            let high = (i >> 8 & 255);
+            rom.setHighLowBits(255, high, low);
+            expect(rom.get16(255)).toBe(i);
+        }
+    });
+
+    test('should set by 4 Bits', () => {
+        for (let i = 0; i <= 65535; i++) {
+            let bits4 = (i & 15);
+            let bits3 = (i >> 4 & 15);
+            let bits2 = (i >> 8 & 15);
+            let bits1 = (i >> 12 & 15);
+            rom.setPer4Bits(255, bits1, bits2, bits3, bits4);
+            expect(rom.get16(255)).toBe(i);
+        }
+    });
 });
-
-test("Set and Get next instruction", () => {
-    for (let i=pc; i<romTotalAddresses; i++){
-        //16 Bit highest number
-        rom.set16(i, i)
-        expect(rom.get16(i)).toBe(i)
-    }
-})
-
-test("Set and Get High low Bits to next instruction", () => {
-    for(let i=0; i<=65535; i++){
-        let low = (i & 255);
-        let high = (i >> 8 & 255);
-        rom.setHighLowBits(255, high, low);
-        expect(rom.get16(255)).toBe(i);
-    }
-})
