@@ -44,7 +44,7 @@ describe('ProgramRom16', () => {
 
     test('fetch instructions', () => {
         rom.setPer4Bits(0, 0, 1, 1, Instructions.LDI);
-        expect(rom.StringPer4Bits(pc.getCounter())).toBe(`Address: 0, Bits: 0000 0001 0001 ${decToBin(Instructions.LDI)}`);
+        expect(rom.stringPer4Bits(pc.getCounter())).toBe(`Address: 0, Bits: 0000 0001 0001 ${decToBin(Instructions.LDI)}`);
     });
 });
 
