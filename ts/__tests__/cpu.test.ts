@@ -243,7 +243,7 @@ describe('CPU', () => {
     });
 
     test('STR', () => {
-        rom.setWithImmadiate(0, 255, 1, Instructions.LDI);
+        rom.setWithImmadiate(0, 100, 1, Instructions.LDI);
         rom.setWithImmadiate(1, 1, 2, Instructions.LDI);
         rom.setPer4Bits(2, 2, 0, 1, Instructions.STR)
 
@@ -251,6 +251,34 @@ describe('CPU', () => {
         cpu.execute(cpu.fetch());
         cpu.execute(cpu.fetch());
 
-        expect(ram.get(1)).toBe(255);
+        expect(ram.get(1)).toBe(100);
+    });
+
+    test('LOD', () => {
+        rom.setWithImmadiate(0, 100, 1, Instructions.LDI);
+        rom.setWithImmadiate(1, 1, 2, Instructions.LDI);
+        rom.setPer4Bits(2, 2, 0, 1, Instructions.STR)
+        rom.setPer4Bits(3, 2, 0, 3, Instructions.LOD)
+
+        cpu.execute(cpu.fetch());
+        cpu.execute(cpu.fetch());
+        cpu.execute(cpu.fetch());
+        cpu.execute(cpu.fetch());
+
+        expect(registers.get(3)).toBe(100);
+    });
+    
+    test('LOD', () => {
+        rom.setWithImmadiate(0, 100, 1, Instructions.LDI);
+        rom.setWithImmadiate(1, 1, 2, Instructions.LDI);
+        rom.setPer4Bits(2, 2, 0, 1, Instructions.STR)
+        rom.setPer4Bits(3, 2, 0, 3, Instructions.LOD)
+
+        cpu.execute(cpu.fetch());
+        cpu.execute(cpu.fetch());
+        cpu.execute(cpu.fetch());
+        cpu.execute(cpu.fetch());
+
+        expect(registers.get(3)).toBe(100);
     });
 });
