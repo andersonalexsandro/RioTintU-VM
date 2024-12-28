@@ -48,7 +48,13 @@ describe('CPU', () => {
     });
 
     test('fetch instructions', () => {
-        //TODO test fetch return
+        rom.setWithImmadiate(0, 100, 1, Instructions.LDI);
+        rom.setWithImmadiate(1, 155, 2, Instructions.LDI);
+
+        expect(cpu.fetch()).toBe(rom.get16(0))
+        pc.incremment();
+        expect(cpu.fetch()).toBe(rom.get16(1))
+
     });
 
     test('LDI', () =>{     
@@ -78,4 +84,24 @@ describe('CPU', () => {
 
         expect(registers.get(3)).toBe(255)
     })
+
+    test('SUB', () =>{
+        rom.setWithImmadiate(0, 155, 1, Instructions.LDI);
+        rom.setWithImmadiate(1, 155, 2, Instructions.LDI);
+        rom.setPer4Bits(2, 1, 2, 3, Instructions.SUB);
+
+        cpu.execute(cpu.fetch())
+        cpu.execute(cpu.fetch())
+        cpu.execute(cpu.fetch())
+
+        expect(registers.get(3)).toBe(0)
+    })
 });
+
+function stringPer4Bits(value: number): string {
+    const bits4_1 = ((value >> 12) & 0b1111).toString(2).padStart(4, '0'); // Bits 15-12 -> A
+    const bits4_2 = ((value >> 8) & 0b1111).toString(2).padStart(4, '0');  // Bits 11-8  -> B
+    const bits4_3 = ((value >> 4) & 0b1111).toString(2).padStart(4, '0');  // Bits 7-4   -> C
+    const bits4_4 = (value & 0b1111).toString(2).padStart(4, '0');         // Bits 3-0   -> OPCODE
+    return `Bits: ${bits4_1} ${bits4_2} ${bits4_3} ${bits4_4}`;
+}

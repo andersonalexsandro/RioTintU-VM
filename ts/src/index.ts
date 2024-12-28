@@ -49,8 +49,9 @@ rom.setPer4Bits(1, 0b1000, 0b0000, 0b0010, Instructions.LDI);
 rom.logPer4Bits(0);
 rom.logPer4Bits(1);
 
-cpu.execute(cpu.fetch());
-cpu.execute(cpu.fetch());
+cpu.fetch();
+pc.incremment()
+cpu.fetch();
 
 
 

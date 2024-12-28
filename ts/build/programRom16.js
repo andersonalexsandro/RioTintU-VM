@@ -16,28 +16,31 @@ class ProgramRom16 {
         this.dataView.setUint8(address * 2, high8);
         this.dataView.setUint8(address * 2 + 1, low8);
     }
-    setPer4Bits(address, bits1, bits2, bits3, bits4) {
-        const highBits = (bits1 << 4) | bits2;
-        const lowBits = (bits3 << 4) | bits4;
-        this.setHighLowBits(address, highBits, lowBits);
+    setWithImmadiate(address, immediate, C, OP) {
+        const high = immediate;
+        const low = (C << 4) | OP;
+        this.setHighLowBits(address, high, low);
+    }
+    setPer4Bits(address, A, B, C, OP) {
+        const high = (A << 4) | B;
+        const low = (C << 4) | OP;
+        this.setHighLowBits(address, high, low);
     }
     logPer4Bits(address) {
+        console.log(this.stringPer4Bits(address));
+    }
+    stringPer4Bits(address) {
         const value = this.get16(address);
-        const bits4_1 = ((value >> 12) & 0b1111).toString(2).padStart(4, '0'); // Bits 15-12
-        const bits4_2 = ((value >> 8) & 0b1111).toString(2).padStart(4, '0'); // Bits 11-8
-        const bits4_3 = ((value >> 4) & 0b1111).toString(2).padStart(4, '0'); // Bits 7-4
-        const bits4_4 = (value & 0b1111).toString(2).padStart(4, '0'); // Bits 3-0
-        console.log(`PROM16- Address: ${address}, Bits: ${bits4_1} ${bits4_2} ${bits4_3} ${bits4_4}`);
+        const bits4_1 = ((value >> 12) & 0b1111).toString(2).padStart(4, '0'); // Bits 15-12 -> A
+        const bits4_2 = ((value >> 8) & 0b1111).toString(2).padStart(4, '0'); // Bits 11-8  -> B
+        const bits4_3 = ((value >> 4) & 0b1111).toString(2).padStart(4, '0'); // Bits 7-4   -> C
+        const bits4_4 = (value & 0b1111).toString(2).padStart(4, '0'); // Bits 3-0   -> OPCODE
+        return `Address: ${address}, Bits: ${bits4_1} ${bits4_2} ${bits4_3} ${bits4_4}`;
     }
     toString() {
         let result = '';
         for (let i = 0; i < this.lengthInBytes; i++) {
-            const value = this.get16(i);
-            const bits4_1 = ((value >> 12) & 0b1111).toString(2).padStart(4, '0'); // Bits 15-12
-            const bits4_2 = ((value >> 8) & 0b1111).toString(2).padStart(4, '0'); // Bits 11-8
-            const bits4_3 = ((value >> 4) & 0b1111).toString(2).padStart(4, '0'); // Bits 7-4
-            const bits4_4 = (value & 0b1111).toString(2).padStart(4, '0'); // Bits 3-0
-            result += `Address: ${i}, Bits: ${bits4_1} ${bits4_2} ${bits4_3} ${bits4_4}`;
+            result += this.stringPer4Bits(i);
             if (i < this.lengthInBytes - 1) {
                 result += ', ';
             }

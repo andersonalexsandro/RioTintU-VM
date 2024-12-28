@@ -1,4 +1,5 @@
 import { ProgramCounter } from '../src/programCounter';
+import { describe, expect, test, beforeEach } from '@jest/globals';
 
 describe('ProgramCounter', () => {
     let pc: ProgramCounter;
