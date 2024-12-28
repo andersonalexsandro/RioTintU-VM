@@ -1,0 +1,3 @@
+[submodule "ts/assembler"]
+	path = ts/assembler
+	url = https://github.com/andersonalexsandro/RioTintU-Assembler.git
