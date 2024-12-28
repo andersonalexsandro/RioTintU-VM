@@ -112,6 +112,7 @@
     "node_modules",
     "__tests__",
     "**/*.test.ts",
-    "babel.config.ts"
+    "babel.config.ts",
+    "assemlber"
   ]
 }

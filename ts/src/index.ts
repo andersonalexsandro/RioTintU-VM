@@ -7,6 +7,7 @@ import ProgramRom16 from "./programRom16";
 import Ram from "./ram";
 import { Registers } from "./registers";
 import Screen from "./screen";
+import { Assembler } from "../assembler/src/assembler";
 
 const ramLength = 256;
 const screenStart = 246;
@@ -42,19 +43,5 @@ memoryMapper.map(screen, screenStart, screenStart + Screen.nBytesAlocated - 1, t
 memoryMapper.map(numberDisplay, numberDisplayStart, numberDisplayStart + NumberDisplay.nBytesAlocated - 1, true);
 
 cpu = new CPU(memoryMapper, rom, registers, flags, pc);
-
-
-rom.setWithImmadiate(0, 255, 1, Instructions.LDI);
-rom.setWithImmadiate(1, 1, 2, Instructions.LDI);
-rom.setPer4Bits(2, 2, 0, 1, Instructions.STR)
-
-cpu.execute(cpu.fetch());
-cpu.execute(cpu.fetch());
-cpu.execute(cpu.fetch());
-
-console.log(registers.get(1));
-console.log(registers.get(2));
-console.log();
-console.log(ram.toString());
-
+const assembler = new Assembler('../assembler/assembly', '../assembler/assembled');
 
