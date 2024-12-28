@@ -1,5 +1,5 @@
 import { FlagCode, Flags } from "./flags";
-import { ProgramCounter } from "./programCounter";
+import { ProgramCounter8 } from "./programCounter8";
 import ProgramRom16 from "./programRom16";
 import { Registers } from "./registers";
 
@@ -28,9 +28,9 @@ export default class CPU {
     private rom: ProgramRom16;
     private registers: Registers;
     private flags: Flags;
-    private pc: ProgramCounter;
+    private pc: ProgramCounter8;
 
-    constructor(memory: Memory, rom: ProgramRom16, registers: Registers, flags: Flags, pc: ProgramCounter) {
+    constructor(memory: Memory, rom: ProgramRom16, registers: Registers, flags: Flags, pc: ProgramCounter8) {
         this.memory = memory;
         this.rom = rom;
         this.registers = registers;
@@ -175,6 +175,7 @@ export default class CPU {
         const regC = this.getRegContent(C);
         const result = regC + immediate;
         this.setRegContent(C, result);
+        this.flags.setFlags(result);
         this.pc.incremment();
     }
 
@@ -233,7 +234,7 @@ export default class CPU {
         this.pc.incremment();
     }
 
-    private lod(dest: number, offset: number, A: number){
+    private lod(dest: number, A: number, offset: number){
         const regA = this.getRegContent(A);
         const resultAddress = regA + offset;
         const memoryContent = this.memory.get(resultAddress);
@@ -241,7 +242,7 @@ export default class CPU {
         this.pc.incremment();
     }
 
-    private str(C: number, offset: number, A: number){
+    private str(C: number, A: number, offset: number){
         const regA = this.getRegContent(A);
         const resultAddress = regA + offset;
         const regC = this.getRegContent(C);

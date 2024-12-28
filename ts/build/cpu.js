@@ -156,6 +156,7 @@ class CPU {
         const regC = this.getRegContent(C);
         const result = regC + immediate;
         this.setRegContent(C, result);
+        this.flags.setFlags(result);
         this.pc.incremment();
     }
     brh(C, A, B) {
@@ -216,7 +217,7 @@ class CPU {
         this.setRegContent(dest, memoryContent);
         this.pc.incremment();
     }
-    str(C, offset, A) {
+    str(C, A, offset) {
         const regA = this.getRegContent(A);
         const resultAddress = regA + offset;
         const regC = this.getRegContent(C);

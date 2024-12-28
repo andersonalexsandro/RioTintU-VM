@@ -1,11 +1,11 @@
-import { ProgramCounter } from '../src/programCounter';
+import { ProgramCounter8 } from '../src/programCounter8';
 import { describe, expect, test, beforeEach } from '@jest/globals';
 
-describe('ProgramCounter', () => {
-    let pc: ProgramCounter;
+describe('ProgramCounter8', () => {
+    let pc: ProgramCounter8;
 
     beforeEach(() => {
-        pc = new ProgramCounter(); // Inicializa o contador com o valor padrão (0)
+        pc = new ProgramCounter8(); // Inicializa o contador com o valor padrão (0)
     });
 
     test('should initialize with default value', () => {
@@ -13,7 +13,7 @@ describe('ProgramCounter', () => {
     });
 
     test('should initialize with a specified value', () => {
-        pc = new ProgramCounter(10); // Inicializa com valor 10
+        pc = new ProgramCounter8(10); // Inicializa com valor 10
         expect(pc.toString()).toBe('Program Counter: 10');
     });
 

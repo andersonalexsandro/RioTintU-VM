@@ -2,7 +2,7 @@ import CPU, { Instructions } from "./cpu";
 import { Flags } from "./flags";
 import MemoryMapper from "./memoryMapper";
 import NumberDisplay from "./numberDisplay";
-import { ProgramCounter } from "./programCounter";
+import { ProgramCounter8 } from "./programCounter8";
 import ProgramRom16 from "./programRom16";
 import Ram from "./ram";
 import { Registers } from "./registers";
@@ -21,7 +21,7 @@ let ram: Ram;
 let rom: ProgramRom16;
 let registers: Registers;
 let flags: Flags;
-let pc: ProgramCounter;
+let pc: ProgramCounter8;
 let numberDisplay: NumberDisplay;
 let screen: Screen;
 let memoryMapper: MemoryMapper;
@@ -30,7 +30,7 @@ rom = new ProgramRom16(romLength);
 registers = new Registers(registersLength);
 registers.setRegisterNames(['r0', 'r1', 'r2', 'r3', 'r4', 'r5,', 'r6', 'r7', 'r8', 'r9', 'r10', 'r11', 'r12', 'r13', 'r14', 'r15'])
 flags = new Flags();
-pc = new ProgramCounter();
+pc = new ProgramCounter8();
 ram = new Ram(ramLength);
 
 screen = new Screen(ram, screenStart, screenWidth, screenHeigth);
@@ -44,14 +44,17 @@ memoryMapper.map(numberDisplay, numberDisplayStart, numberDisplayStart + NumberD
 cpu = new CPU(memoryMapper, rom, registers, flags, pc);
 
 
-rom.setWithImmadiate(0, 0b01111111, 1, Instructions.LDI);
-rom.setWithImmadiate(1, 0b00000001, 2, Instructions.LDI);
-rom.setPer4Bits(2, 2, 1, 3, Instructions.SUB);
+rom.setWithImmadiate(0, 255, 1, Instructions.LDI);
+rom.setWithImmadiate(1, 1, 2, Instructions.LDI);
+rom.setPer4Bits(2, 2, 0, 1, Instructions.STR)
 
 cpu.execute(cpu.fetch());
 cpu.execute(cpu.fetch());
 cpu.execute(cpu.fetch());
 
-
+console.log(registers.get(1));
+console.log(registers.get(2));
+console.log();
+console.log(ram.toString());
 
 

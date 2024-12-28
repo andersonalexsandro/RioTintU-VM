@@ -1,17 +1,17 @@
 import { describe, expect, test, beforeEach } from '@jest/globals';
 import ProgramRom16 from '../src/programRom16';
-import { ProgramCounter } from '../src/programCounter';
+import { ProgramCounter8 as ProgramCounter8 } from '../src/programCounter8';
 import { Instructions } from '../src/cpu';
 
 const length: number = 512;
 const romTotalAddresses = 256;
-let pc: ProgramCounter;
+let pc: ProgramCounter8;
 let rom: ProgramRom16;
 
 describe('ProgramRom16', () => {
     beforeEach(() => {
         rom = new ProgramRom16(length);
-        pc = new ProgramCounter();
+        pc = new ProgramCounter8();
     });
 
     test('should set and get the next instruction correctly', () => {

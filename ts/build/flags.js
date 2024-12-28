@@ -45,8 +45,6 @@ class Flags {
     }
     setFlags(result) {
         const maskedResult = result & 255;
-        console.log(result);
-        console.log(maskedResult);
         this.cout = (result & 256) !== 0;
         this.zero = maskedResult === 0;
         this.even = (maskedResult % 2) === 0;

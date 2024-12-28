@@ -1,4 +1,4 @@
-export class ProgramCounter {
+export class ProgramCounter8 {
     private counter: number;
 
     constructor(counter: number = 0){
@@ -10,7 +10,7 @@ export class ProgramCounter {
     }
 
     public incremment(): void{
-        this.counter++;
+        this.counter > 255 ? this.counter=0 : this.counter++;
     }
     
     public getCounter(){
