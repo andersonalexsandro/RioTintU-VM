@@ -57,6 +57,14 @@ describe('CPU', () => {
 
     });
 
+    test('Program Counter', () => {
+        for(let i=0; i<255; i++){
+            expect(pc.getCounter()).toBe(i);
+            rom.setWithImmadiate(i, 0, 1, Instructions.LDI);
+            cpu.execute(cpu.fetch());
+        }
+    })
+
     test('LDI', () =>{     
         rom.setWithImmadiate(0, 100, 1, Instructions.LDI);
         rom.setWithImmadiate(1, 155, 2, Instructions.LDI);
