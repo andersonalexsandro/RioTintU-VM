@@ -43,15 +43,15 @@ memoryMapper.map(numberDisplay, numberDisplayStart, numberDisplayStart + NumberD
 
 cpu = new CPU(memoryMapper, rom, registers, flags, pc);
 
-rom.setPer4Bits(0, 0b1000, 0b0000, 0b0001, Instructions.LDI);
-rom.setPer4Bits(1, 0b1000, 0b0000, 0b0010, Instructions.LDI);
 
-rom.logPer4Bits(0);
-rom.logPer4Bits(1);
+rom.setWithImmadiate(0, 0b01111111, 1, Instructions.LDI);
+rom.setWithImmadiate(1, 0b00000001, 2, Instructions.LDI);
+rom.setPer4Bits(2, 2, 1, 3, Instructions.SUB);
 
-cpu.fetch();
-pc.incremment()
-cpu.fetch();
+cpu.execute(cpu.fetch());
+cpu.execute(cpu.fetch());
+cpu.execute(cpu.fetch());
+
 
 
 

@@ -49,7 +49,7 @@ describe('CPU', () => {
 
     test('fetch instructions', () => {
         rom.setWithImmadiate(0, 100, 1, Instructions.LDI);
-        rom.setWithImmadiate(1, 155, 2, Instructions.LDI);
+        rom.setWithImmadiate(1, 155, 2, Instructions.ADD);
 
         expect(cpu.fetch()).toBe(rom.get16(0))
         pc.incremment();
@@ -63,7 +63,7 @@ describe('CPU', () => {
             rom.setWithImmadiate(i, 0, 1, Instructions.LDI);
             cpu.execute(cpu.fetch());
         }
-    })
+    });
 
     test('LDI', () =>{     
         rom.setWithImmadiate(0, 100, 1, Instructions.LDI);
@@ -78,7 +78,7 @@ describe('CPU', () => {
         registers.toString();
         expect(registers.get(1)).toBe(100)
         expect(registers.get(2)).toBe(155)
-    })
+    });
 
 
     test('ADD', () =>{
@@ -91,7 +91,7 @@ describe('CPU', () => {
         cpu.execute(cpu.fetch())
 
         expect(registers.get(3)).toBe(255)
-    })
+    });
 
     test('SUB', () =>{
         rom.setWithImmadiate(0, 155, 1, Instructions.LDI);
@@ -103,7 +103,96 @@ describe('CPU', () => {
         cpu.execute(cpu.fetch())
 
         expect(registers.get(3)).toBe(0)
-    })
+    });
+
+    test('NOR', () =>{
+        rom.setWithImmadiate(0, 0b10101010, 1, Instructions.LDI);
+        rom.setWithImmadiate(1, 0b11100000, 2, Instructions.LDI);
+        rom.setPer4Bits(2, 1, 2, 3, Instructions.NOR);
+
+        cpu.execute(cpu.fetch());
+        cpu.execute(cpu.fetch());
+        cpu.execute(cpu.fetch());
+
+        expect(registers.get(3)).toBe(21);        
+    });
+
+    test('AND', () => {
+        rom.setWithImmadiate(0, 0b10101010, 1, Instructions.LDI);
+        rom.setWithImmadiate(1, 0b11100000, 2, Instructions.LDI);
+        rom.setPer4Bits(2, 1, 2, 3, Instructions.AND);
+
+        cpu.execute(cpu.fetch());
+        cpu.execute(cpu.fetch());
+        cpu.execute(cpu.fetch());
+
+        expect(registers.get(3)).toBe(0b10100000); 
+    });
+
+    test('XOR', () => {
+        rom.setWithImmadiate(0, 0b10101010, 1, Instructions.LDI);
+        rom.setWithImmadiate(1, 0b11100000, 2, Instructions.LDI);
+        rom.setPer4Bits(2, 1, 2, 3, Instructions.XOR);
+
+        cpu.execute(cpu.fetch());
+        cpu.execute(cpu.fetch());
+        cpu.execute(cpu.fetch());
+
+        expect(registers.get(3)).toBe(0b01001010); 
+    });
+
+    test('Flags', () => {
+        rom.setWithImmadiate(0, 0b11111111, 1, Instructions.LDI);
+        rom.setWithImmadiate(1, 0b00000001, 2, Instructions.LDI);
+        rom.setPer4Bits(2, 1, 2, 3, Instructions.ADD);
+
+        cpu.execute(cpu.fetch());
+        cpu.execute(cpu.fetch());
+        cpu.execute(cpu.fetch());
+
+        expect(flags.getCout()).toBe(true);
+        expect(flags.getEven()).toBe(true);
+        expect(flags.getMsb()).toBe(false);
+        expect(flags.getZero()).toBe(true);
+
+        // ---------------------------------------------
+
+        rom.setPer4Bits(3, 2, 1, 3, Instructions.SUB);
+        cpu.execute(cpu.fetch());
+        expect(registers.get(3)).toBe(2);
+
+        expect(flags.getCout()).toBe(true);
+        expect(flags.getEven()).toBe(true);
+        expect(flags.getMsb()).toBe(false);
+        expect(flags.getZero()).toBe(false);
+
+
+        //------------------------------------------------
+
+        rom.setWithImmadiate(4, 0b01111111, 1, Instructions.LDI);
+        rom.setWithImmadiate(5, 0b00000001, 2, Instructions.LDI);
+        rom.setPer4Bits(6, 2, 1, 3, Instructions.SUB);
+
+        cpu.execute(cpu.fetch());
+        cpu.execute(cpu.fetch());
+        cpu.execute(cpu.fetch());
+
+        expect(flags.getCout()).toBe(true);
+        expect(flags.getEven()).toBe(true);
+        expect(flags.getMsb()).toBe(true);
+        expect(flags.getZero()).toBe(false);
+
+    });
+
+    test('XOR', () => {
+        rom.setWithImmadiate(0, 0b10101010, 1, Instructions.LDI);
+        rom.setPer4Bits(1, 1, 0, 2, Instructions.RSH);
+
+        cpu.execute(cpu.fetch());
+        cpu.execute(cpu.fetch());
+
+        expect(registers.get(2)).toBe(0b01010101)
+    });
 });
 
 function stringPer4Bits(value: number): string {

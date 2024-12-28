@@ -56,11 +56,13 @@ export class Flags {
     }
 
     setFlags(result: number): void {
-        const maskedResult = result & 0b11111111; 
-        this.cout = (result & 0b100000000)!== 0;
-        this.zero = maskedResult === 0b00000000;
+        const maskedResult = result & 255; 
+        console.log(result);
+        console.log(maskedResult);
+        this.cout = (result & 256) !== 0;
+        this.zero = maskedResult === 0;
         this.even = (maskedResult % 2) === 0;
-        this.msb = (maskedResult & 0b10000000) !== 0;
+        this.msb = (maskedResult & 128) !== 0;
     }
 
     toString(): string {

@@ -121,7 +121,8 @@ export default class CPU {
     private sub(dest: number, A: number, B: number){
         const regA = this.getRegContent(A);
         const regB = this.getRegContent(B);
-        const result = regA - regB;
+        const negativeB = (~regB) + 1;
+        const result = regA + negativeB;
         this.setRegContent(dest, result);
         this.flags.setFlags(result);
         this.pc.incremment();

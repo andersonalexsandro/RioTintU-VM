@@ -41,16 +41,7 @@ class CPU {
     fetch() {
         const nexInstrucionAddress = (this.pc.getCounter());
         const instruction = this.rom.get16(nexInstrucionAddress);
-        this.logPer4Bits(instruction);
         return instruction;
-    }
-    //TODO delete this
-    logPer4Bits(value) {
-        const bits4_1 = ((value >> 12) & 0b1111).toString(2).padStart(4, '0'); // Bits 15-12
-        const bits4_2 = ((value >> 8) & 0b1111).toString(2).padStart(4, '0'); // Bits 11-8
-        const bits4_3 = ((value >> 4) & 0b1111).toString(2).padStart(4, '0'); // Bits 7-4
-        const bits4_4 = (value & 0b1111).toString(2).padStart(4, '0'); // Bits 3-0
-        console.log(`CPU Fetch- Bits: ${bits4_1} ${bits4_2} ${bits4_3} ${bits4_4}`);
     }
     execute(instruction) {
         const [A, B, C, OPCODE] = this.splitArgs(instruction);
@@ -116,7 +107,8 @@ class CPU {
     sub(dest, A, B) {
         const regA = this.getRegContent(A);
         const regB = this.getRegContent(B);
-        const result = regA - regB;
+        const negativeB = (~regB) + 1;
+        const result = regA + negativeB;
         this.setRegContent(dest, result);
         this.flags.setFlags(result);
         this.pc.incremment();

@@ -29,14 +29,6 @@ class ProgramRom16 {
     logPer4Bits(address) {
         console.log(this.stringPer4Bits(address));
     }
-    stringPer4Bits(address) {
-        const value = this.get16(address);
-        const bits4_1 = ((value >> 12) & 0b1111).toString(2).padStart(4, '0'); // Bits 15-12 -> A
-        const bits4_2 = ((value >> 8) & 0b1111).toString(2).padStart(4, '0'); // Bits 11-8  -> B
-        const bits4_3 = ((value >> 4) & 0b1111).toString(2).padStart(4, '0'); // Bits 7-4   -> C
-        const bits4_4 = (value & 0b1111).toString(2).padStart(4, '0'); // Bits 3-0   -> OPCODE
-        return `Address: ${address}, Bits: ${bits4_1} ${bits4_2} ${bits4_3} ${bits4_4}`;
-    }
     toString() {
         let result = '';
         for (let i = 0; i < this.lengthInBytes; i++) {
@@ -46,6 +38,14 @@ class ProgramRom16 {
             }
         }
         return result;
+    }
+    stringPer4Bits(address) {
+        const value = this.get16(address);
+        const bits4_1 = ((value >> 12) & 0b1111).toString(2).padStart(4, '0'); // Bits 15-12 -> A
+        const bits4_2 = ((value >> 8) & 0b1111).toString(2).padStart(4, '0'); // Bits 11-8  -> B
+        const bits4_3 = ((value >> 4) & 0b1111).toString(2).padStart(4, '0'); // Bits 7-4   -> C
+        const bits4_4 = (value & 0b1111).toString(2).padStart(4, '0'); // Bits 3-0   -> OPCODE
+        return `Address: ${address}, Bits: ${bits4_1} ${bits4_2} ${bits4_3} ${bits4_4}`;
     }
 }
 exports.default = ProgramRom16;
