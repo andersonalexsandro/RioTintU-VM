@@ -1,5 +1,5 @@
 import { describe, expect, test, beforeEach } from '@jest/globals';
-import CPU from '../src/cpu';
+import CPU, { Instructions } from '../src/cpu';
 import Ram from '../src/ram';
 import ProgramRom16 from '../src/programRom16';
 import { Registers } from '../src/registers';
@@ -9,8 +9,7 @@ import NumberDisplay from '../src/numberDisplay';
 import MemoryMapper from '../src/memoryMapper';
 import Screen from '../src/screen';
 
-
-describe('CPU', () =>{
+describe('CPU', () => {
     const ramLength = 256;
     const screenStart = 246;
     const screenWidth = 32;
@@ -29,9 +28,10 @@ describe('CPU', () =>{
     let screen: Screen;
     let memoryMapper: MemoryMapper;
 
-    beforeEach(() =>{
+    beforeEach(() => {
         rom = new ProgramRom16(romLength);
         registers = new Registers(registersLength);
+        registers.setRegisterNames(['r0', 'r1', 'r2', 'r3', 'r4', 'r5,', 'r6', 'r7', 'r8', 'r9', 'r10', 'r11', 'r12', 'r13', 'r14', 'r15'])
         flags = new Flags();
         pc = new ProgramCounter();
         ram = new Ram(ramLength);
@@ -45,8 +45,37 @@ describe('CPU', () =>{
         memoryMapper.map(numberDisplay, numberDisplayStart, numberDisplayStart + NumberDisplay.nBytesAlocated - 1, true);
         
         cpu = new CPU(memoryMapper, rom, registers, flags, pc);
+    });
 
-        test('fetch instructions', () =>{
-        }
-    }) 
-})
+    test('fetch instructions', () => {
+        //TODO test fetch return
+    });
+
+    test('LDI', () =>{     
+        rom.setWithImmadiate(0, 100, 1, Instructions.LDI);
+        rom.setWithImmadiate(1, 155, 2, Instructions.LDI);
+
+        cpu.execute(cpu.fetch());
+        expect(pc.getCounter()).toBe(1);
+
+        cpu.execute(cpu.fetch());
+        expect(pc.getCounter()).toBe(2);
+
+        registers.toString();
+        expect(registers.get(1)).toBe(100)
+        expect(registers.get(2)).toBe(155)
+    })
+
+
+    test('ADD', () =>{
+        rom.setWithImmadiate(0, 100, 1, Instructions.LDI);
+        rom.setWithImmadiate(1, 155, 2, Instructions.LDI);
+        rom.setPer4Bits(2, 1, 2, 3, Instructions.ADD);
+
+        cpu.execute(cpu.fetch())
+        cpu.execute(cpu.fetch())
+        cpu.execute(cpu.fetch())
+
+        expect(registers.get(3)).toBe(255)
+    })
+});

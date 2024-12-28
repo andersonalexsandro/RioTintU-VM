@@ -49,10 +49,21 @@ export default class CPU {
     }
 
     public fetch(): number {
-        const nexInstrucionAddress = (this.pc.getCounter() * 2);
+        const nexInstrucionAddress = (this.pc.getCounter());
         const instruction = this.rom.get16(nexInstrucionAddress);
         return instruction;
     }
+
+    //TODO delete this
+    private logPer4Bits(value: number): void {
+        const bits4_1 = ((value >> 12) & 0b1111).toString(2).padStart(4, '0'); // Bits 15-12
+        const bits4_2 = ((value >> 8) & 0b1111).toString(2).padStart(4, '0');  // Bits 11-8
+        const bits4_3 = ((value >> 4) & 0b1111).toString(2).padStart(4, '0');  // Bits 7-4
+        const bits4_4 = (value & 0b1111).toString(2).padStart(4, '0');         // Bits 3-0
+    
+        console.log(`CPU Fetch- Bits: ${bits4_1} ${bits4_2} ${bits4_3} ${bits4_4}`);
+    }
+
 
     public execute(instruction: number) {
         const [A, B, C, OPCODE] = this.splitArgs(instruction);

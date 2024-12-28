@@ -1,6 +1,7 @@
 import { describe, expect, test, beforeEach } from '@jest/globals';
 import ProgramRom16 from '../src/programRom16';
 import { ProgramCounter } from '../src/programCounter';
+import { Instructions } from '../src/cpu';
 
 const length: number = 512;
 const romTotalAddresses = 256;
@@ -40,4 +41,21 @@ describe('ProgramRom16', () => {
             expect(rom.get16(255)).toBe(i);
         }
     });
+
+    test('fetch instructions', () => {
+        rom.setPer4Bits(0, 0, 1, 1, Instructions.LDI);
+        expect(rom.StringPer4Bits(pc.getCounter())).toBe(`Address: 0, Bits: 0000 0001 0001 ${decToBin(Instructions.LDI)}`);
+    });
 });
+
+export function decToBin(decimal: number, length: number = 4, spaceBetween: boolean = false): string {
+    let binaryString = decimal.toString(2).padStart(length, '0');
+    
+    if (spaceBetween) {
+        // Add spaces between each group of 4 bits
+        binaryString = binaryString.padStart(Math.ceil(binaryString.length / 4) * 4, '0'); 
+        binaryString = binaryString.match(/.{1,4}/g)?.join(' ') || binaryString;
+    }
+    
+    return binaryString;
+}
