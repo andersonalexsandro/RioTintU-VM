@@ -252,10 +252,9 @@ export class Assembler {
         let immediate: string;
     
         if (args[0].toLowerCase() === 'inc') {
-            immediate = this.toBinary(1, 8); // Incremento
+            immediate = this.toBinary(1, 8);
         } else {
-            // Para decremento (DEC), usamos complemento a 2 de -1
-            const value = 0b11111111; // Valor de -1 em complemento a 2 para 8 bits
+            const value = 0b11111111;
             immediate = this.toBinary(value, 8);
         }
     

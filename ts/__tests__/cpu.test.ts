@@ -94,15 +94,15 @@ describe('CPU', () => {
     });
 
     test('SUB', () =>{
-        rom.setWithImmadiate(0, 155, 1, Instructions.LDI);
-        rom.setWithImmadiate(1, 155, 2, Instructions.LDI);
+        rom.setWithImmadiate(0, 1, 1, Instructions.LDI);
+        rom.setWithImmadiate(1, 2, 2, Instructions.LDI);
         rom.setPer4Bits(2, 1, 2, 3, Instructions.SUB);
 
         cpu.execute(cpu.fetch())
         cpu.execute(cpu.fetch())
         cpu.execute(cpu.fetch())
 
-        expect(registers.get(3)).toBe(0)
+        expect(registers.get(3)).toBe(0b11111111);
     });
 
     test('NOR', () =>{
