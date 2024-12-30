@@ -1,3 +1,4 @@
+import { log } from 'console';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -12,7 +13,7 @@ export class Assembler {
         'nop', 'hlt', 'add', 'sub',
         'nor', 'and', 'xor', 'rsh',
         'ldi', 'adi', 'jmp', 'brh', 
-        'jid', 'ads', 'lod', 'str'
+        'jid', 'adc', 'lod', 'str'
     ];
     
     private registers = [
@@ -147,17 +148,53 @@ export class Assembler {
             const line = assemblyList[i].trim();
             const args = line.split(/\s+/); 
             const opcode = args[0]?.toLowerCase();
+            let assembled: string;
     
-            if (opcode === 'ldi') {
-                const immediate = Number(args[2]).toString(2).padStart(8, '0'); // 8 bits
-                const reg = this.symbols.get(args[1])!.toString(2).padStart(4, '0'); // 4 bits
-                const opcodeBinary = this.symbols.get(opcode)!.toString(2).padStart(4, '0'); // 4 bits
-                const assembled = `${immediate}${reg}${opcodeBinary}`;
+            if (['ldi', 'adi'].includes(opcode)) {
+                assembled = this.immediateOperation(args);
                 machineCode.push(assembled);
                 continue;
             } 
+
+            if (['add', 'sub', 'nor', 'and', 'xor', 'adc'].includes(opcode)) {
+                assembled = this.logicArithmeticOperation(args);
+                machineCode.push(assembled);
+                continue;
+            }
+
+            if(['lod', 'str'].includes(opcode)){
+                assembled = this.memoryOperation(args);
+                machineCode.push(assembled);
+                continue;
+            }
+
         }
         return machineCode
+    }
+
+    private memoryOperation(args: string[]): string{
+        const opcode = this.symbolToBinary(args[0].toLowerCase(), 4);
+        const regC = this.symbolToBinary(args[1], 4)
+        const regA = this.symbolToBinary(args[2], 4);
+        const immediate = this.toBinary(Number(args[3]), 4);
+        return `${regA}${immediate}${regC}${opcode}`
+    }
+
+    private immediateOperation(args: string[]): string{
+        const immediate = this.toBinary(Number(args[2]), 8);
+        const reg = this.symbolToBinary(args[1], 4);
+        const opcodeBinary = this.symbolToBinary(args[0].toLowerCase(), 4);
+        const assembled = `${immediate}${reg}${opcodeBinary}`;
+        return assembled;
+    }
+
+    private logicArithmeticOperation(args: string[]): string{
+        const regABin = this.symbolToBinary(args[2], 4);
+        const regBBin = this.symbolToBinary(args[3], 4);
+        const regCBin = this.symbolToBinary(args[1], 4);
+        const opcodeBin = this.symbolToBinary(args[0].toLowerCase(), 4);
+        const assembled = `${regABin}${regBBin}${regCBin}${opcodeBin}`;
+        return assembled;
     }
 
     private validate(assemblyList: string[]): ErrorInfo[]{
@@ -199,5 +236,24 @@ export class Assembler {
         }
     
         return null;
+    }    
+
+    private toBinary(value: number, bits: number): string {
+        if (value < 0) {
+            throw new Error(`Value cannot be negative: ${value}`);
+        }
+        const binary = value.toString(2);
+        if (binary.length > bits) {
+            throw new Error(`Value ${value} exceeds the limit of ${bits} bits`);
+        }
+        return binary.padStart(bits, '0');
+    }
+    
+    private symbolToBinary(symbol: string, bits: number): string {
+        const value = this.symbols.get(symbol);
+        if (value === undefined) {
+            throw new Error(`Symbol not found: ${symbol}`);
+        }
+        return this.toBinary(value, bits);
     }    
 }

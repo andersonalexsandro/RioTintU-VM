@@ -1,2 +1,2 @@
-LDI r1 10
-LDI r2 8
+LOD r2 r1 10
+STR r2 r1 10
