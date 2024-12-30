@@ -13,7 +13,9 @@ export class Assembler {
         'nop', 'hlt', 'add', 'sub',
         'nor', 'and', 'xor', 'rsh',
         'ldi', 'adi', 'jmp', 'brh', 
-        'jid', 'adc', 'lod', 'str'
+        'jid', 'adc', 'lod', 'str',
+        'cmp', 'mov', 'neg', 'not',
+        'inc', 'dec' , 'lsh'
     ];
     
     private registers = [
@@ -41,6 +43,7 @@ export class Assembler {
         'pixel_x', 'pixel_y', 'number_display_low_8', 'number_display_high8'
     ];
 
+    private labels = new Map<string, number>();
     private asPath: string;
     private mcPath: string;
     private symbols = new Map<string, number>();
@@ -152,12 +155,15 @@ export class Assembler {
 
     private assemble(assemblyList: string[]): string[]{
         const machineCode: string[] = [];
+        this.resolveLabels(assemblyList);
     
         for (let i = 0; i < assemblyList.length; i++) {
             const line = assemblyList[i].trim();
             const args = line.split(/\s+/); 
             const opcode = args[0]?.toLowerCase();
             let assembled: string;
+
+            if (opcode.startsWith('.')) continue;
     
             if (['ldi', 'adi', 'jid'].includes(opcode)) {
                 assembled = this.immediateOperation(args);
@@ -254,8 +260,8 @@ export class Assembler {
         if (args[0].toLowerCase() === 'inc') {
             immediate = this.toBinary(1, 8);
         } else {
-            const value = 0b11111111;
-            immediate = this.toBinary(value, 8);
+            const oneTwoComp = 0b11111111;
+            immediate = this.toBinary(oneTwoComp, 8);
         }
     
         return `${immediate}${C}${opcode};`;
@@ -293,16 +299,16 @@ export class Assembler {
         return `${A}${B}${C}${opcode}`;
     }
 
-    private brh(args: string[]): string{
+    private brh(args: string[]): string {
         const opcode = this.symbolToBinary(args[0], 4);
-        const immediate = this.toBinary(Number(args[1]), 8);
         const condition = this.symbolToBinary(args[2], 4);
+        const immediate = this.toBinary(args[1], 8);
         return `${immediate}${condition}${opcode}`;
     }
 
-    private jmp(args: string []): string{
-        const opcode = this.symbolToBinary(args[0], 4)
-        const immediate = this.toBinary(Number(args[1]), 8);
+    private jmp(args: string[]): string {
+        const opcode = this.symbolToBinary(args[0], 4);
+        const immediate = this.toBinary(args[1], 8);
         return `${immediate}${'0000'}${opcode}`;
     }
 
@@ -338,49 +344,226 @@ export class Assembler {
         return assembled;
     }
 
-    private validate(assemblyList: string[]): ErrorInfo[]{
+    private validate(assemblyList: string[]): ErrorInfo[] {
         const errors: ErrorInfo[] = [];
-
+        const definedLabels = new Set<string>();
+        const usedLabels = new Set<string>();
+    
         for (let i = 0; i < assemblyList.length; i++) {
             const line = assemblyList[i].trim();
-            const args = line.split(/\s+/); 
-            const opcode = args[0]?.toLowerCase();
-
-            if (opcode === 'ldi') {
-                const error = this.validateLDI(args, i);
-                if (error) errors.push(error);
+    
+            if (!line || line.startsWith('/') || line.startsWith('#')) continue;
+    
+            const tokens = line.split(/\s+/);
+            const opcodeOrLabel = tokens[0]?.toLowerCase();
+    
+            if (opcodeOrLabel.startsWith('.')) {
+                const labelName = opcodeOrLabel;
+                if (definedLabels.has(labelName)) {
+                    errors.push({
+                        line: i,
+                        message: `Duplicate label definition: ${labelName}`
+                    });
+                } else {
+                    definedLabels.add(labelName);
+                }
                 continue;
             }
+    
+            const opcode = opcodeOrLabel;
+            if (!this.opcodes.includes(opcode)) {
+                errors.push({
+                    line: i,
+                    message: `Unknown opcode: ${opcode}`
+                });
+                continue;
+            }
+    
+            switch (opcode) {
+                case 'ldi':
+                    this.validateLDI(tokens, i, errors);
+                    break;
+    
+                case 'jmp':
+                    this.validateJMP(tokens, i, usedLabels, errors);
+                    break;
+    
+                case 'brh':
+                    this.validateBRH(tokens, i, usedLabels, errors);
+                    break;
+    
+                default:
+                    this.validateGeneric(tokens, i, errors);
+                    break;
+            }
         }
-        return errors
+    
+        for (const label of usedLabels) {
+            if (!definedLabels.has(label)) {
+                errors.push({
+                    line: -1,
+                    message: `Undefined label: ${label}`
+                });
+            }
+        }
+    
+        return errors;
     }
     
-    private validateLDI(args: string[], line: number): { line: number, message: string } | null {
-        if (args.length < 3) {
-            return { line, message: 'Not enough args: <LDI> <Reg> <Immediate>' };
+    
+    private validateLDI(tokens: string[], line: number, errors: ErrorInfo[]): void {
+        if (tokens.length < 3) {
+            errors.push({
+                line,
+                message: 'Not enough arguments for LDI: <LDI> <Reg> <Immediate>'
+            });
+            return;
         }
     
-        const register = args[1];
-        const immediate = args[2];
+        const register = tokens[1];
+        const immediate = tokens[2];
     
         if (!this.registers.includes(register)) {
-            return { line, message: `Invalid register: ${register}` };
+            errors.push({
+                line,
+                message: `Invalid register: ${register}`
+            });
         }
     
         if (!this.isNumeric(immediate)) {
-            return { line, message: `Invalid immediate value: ${immediate}` };
+            errors.push({
+                line,
+                message: `Invalid immediate value: ${immediate}`
+            });
+        } else {
+            const value = Number(immediate);
+            if (value < 0 || value > 255) {
+                errors.push({
+                    line,
+                    message: `Immediate value out of range (0-255): ${immediate}`
+                });
+            }
         }
-    
-        const immediateValue = Number(immediate);
-        if (immediateValue < 0 || immediateValue > 255) {
-            return { line, message: `Immediate value out of range (0-255): ${immediate}` };
-        }
-    
-        return null;
-    }    
+    }
 
-    private toBinary(value: number, bits: number): string {
-        const binary = value.toString(2);
+    private validateJMP(tokens: string[], line: number, usedLabels: Set<string>, errors: ErrorInfo[]): void {
+        if (tokens.length < 2) {
+            errors.push({
+                line,
+                message: 'Not enough arguments for JMP: <JMP> <Label>'
+            });
+            return;
+        }
+    
+        const label = tokens[1];
+        if (!label.startsWith('.')) {
+            errors.push({
+                line,
+                message: `Invalid label reference: ${label}`
+            });
+        } else {
+            usedLabels.add(label.toLowerCase());
+        }
+    }
+    
+    private validateBRH(tokens: string[], line: number, usedLabels: Set<string>, errors: ErrorInfo[]): void {
+        if (tokens.length < 3) {
+            errors.push({
+                line,
+                message: 'Not enough arguments for BRH: <BRH> <Label> <Condition>'
+            });
+            return;
+        }
+    
+        const label = tokens[1];
+        const condition = tokens[2];
+    
+        if (!label.startsWith('.')) {
+            errors.push({
+                line,
+                message: `Invalid label reference: ${label}`
+            });
+        } else {
+            usedLabels.add(label.toLowerCase());
+        }
+    
+        if (!this.conditions4.includes(condition)) {
+            errors.push({
+                line,
+                message: `Invalid condition for BRH: ${condition}`
+            });
+        }
+    }
+    
+    private validateGeneric(tokens: string[], line: number, errors: ErrorInfo[]): void {
+        const opcode = tokens[0].toLowerCase();
+    
+        const expectedArgs = this.getExpectedArguments(opcode);
+        if (tokens.length - 1 < expectedArgs) {
+            errors.push({
+                line,
+                message: `Not enough arguments for ${opcode}: expected ${expectedArgs}, got ${tokens.length - 1}`
+            });
+        }
+    }
+    
+    private getExpectedArguments(opcode: string): number {
+        switch (opcode) {
+            case 'add':
+            case 'sub':
+            case 'and':
+            case 'xor':
+            case 'nor':
+            case 'adc':
+                return 3;
+            case 'inc':
+            case 'dec': 
+                return 1;
+            case 'lod':
+            case 'str':
+                return 4;
+            case 'rsh':
+            case 'cmp': 
+            case 'mov': 
+            case 'neg':
+            case 'not':
+            case 'lsh':
+                return 2;
+            default:
+                return 0;
+        }
+    }
+    
+    private resolveLabels(assemblyList: string[]): void {
+        let currentAddress = 0;
+    
+        for (let i = 0; i < assemblyList.length; i++) {
+            const line = assemblyList[i].trim();
+    
+            if (!line || line.startsWith('/') || line.startsWith('#')) continue;
+    
+            const tokens = line.split(/\s+/);
+    
+            if (tokens[0].startsWith('.')) {
+                const labelName = tokens[0].toLowerCase();
+                this.labels.set(labelName, currentAddress);
+                continue;
+            }
+    
+            currentAddress++;
+        }
+    }
+
+    private toBinary(value: string | number, bits: number): string {
+        if (typeof value === 'string') {
+            if (this.labels.has(value.toLowerCase())) {
+                value = this.labels.get(value.toLowerCase())!;
+            } else {
+                throw new Error(`Undefined label: ${value}`);
+            }
+        }
+    
+        const binary = Number(value).toString(2);
         if (binary.length > bits) {
             throw new Error(`Value ${value} exceeds the limit of ${bits} bits`);
         }
