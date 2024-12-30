@@ -23,6 +23,15 @@ export class Assembler {
         'r12', 'r13', 'r14', 'r15'
     ];
 
+    // 000 - NOT MSB | Positive (>0)
+    // 001 - MSB  | Negative (<0)
+    // 010 - NOT COUT  | Less Than (C==false)
+    // 011 - COUT | Greater Than or Equal (c==true)
+    // 100 - ZERO | Equal (Z==true)
+    // 101 - NOT ZERO | Not Equal (z==false)
+    // 110 - NOT EVEN | odd (%2 == 1)
+    // 111 - EVEN (%2 == 0)
+
     private conditions1 = ['pos', 'neg', 'lt', 'ge', 'eq', 'ne', 'odd', 'even'];
     private conditions2 = ['>0', '<0', '<', '>=', '=', '!=', '!%2', '%2'];
     private conditions4 = ['notmsb', 'msb', 'notcarry', 'carry', 'zero', 'notzero', 'noteven', 'even'];
@@ -150,7 +159,7 @@ export class Assembler {
             const opcode = args[0]?.toLowerCase();
             let assembled: string;
     
-            if (['ldi', 'adi'].includes(opcode)) {
+            if (['ldi', 'adi', 'jid'].includes(opcode)) {
                 assembled = this.immediateOperation(args);
                 machineCode.push(assembled);
                 continue;
@@ -168,12 +177,145 @@ export class Assembler {
                 continue;
             }
 
+            if (opcode === 'rsh') {
+                assembled = this.rsh(args);
+                machineCode.push(assembled);
+                continue;
+            } 
+
+            if (opcode === 'jmp') {
+                assembled = this.jmp(args);
+                machineCode.push(assembled);
+                continue;
+            }
+
+            if (opcode === 'brh') {
+                assembled = this.brh(args);
+                machineCode.push(assembled);
+                continue;
+            }
+
+            if (['hlt' , 'nop'].includes(opcode)){
+                machineCode.push(`000000000000${this.symbolToBinary(args[0], 4)}`)
+            }
+
+            if(opcode === 'cmp'){
+                assembled = this.cmp(args);
+                machineCode.push(assembled);
+                continue;
+            }
+
+            if(opcode === 'mov'){
+                assembled = this.mov(args);
+                machineCode.push(assembled);
+                continue;
+            }
+
+            if(opcode === 'lsh'){
+                assembled = this.lsh(args);
+                machineCode.push(assembled);
+                continue; 
+            }
+
+            if(['inc', 'dec'].includes(opcode)){
+                assembled = this.pseudoImmediate(args);
+                machineCode.push(assembled);
+                continue; 
+            }
+
+            if (opcode === 'not'){
+                assembled = this.not(args);
+                machineCode.push(assembled);
+                continue; 
+            }
+
+            if (opcode === 'neg'){
+                assembled = this.neg(args);
+                machineCode.push(assembled);
+                continue; 
+            }
         }
         return machineCode
     }
 
+    private neg(args: string[]): string {
+        const A = this.symbolToBinary('r0', 4);
+        const B = this.symbolToBinary(args[2], 4);
+        const C = this.symbolToBinary(args[1], 4);
+        const opcode = this.symbolToBinary('sub', 4);
+        return `${A}${B}${C}${opcode}`;
+    }
+
+    private pseudoImmediate(args: string[]): string {
+        const opcode = this.symbolToBinary('adi', 4);
+        const C = this.symbolToBinary(args[1], 4);
+        let immediate: string;
+    
+        if (args[0].toLowerCase() === 'inc') {
+            immediate = this.toBinary(1, 8); // Incremento
+        } else {
+            // Para decremento (DEC), usamos complemento a 2 de -1
+            const value = 0b11111111; // Valor de -1 em complemento a 2 para 8 bits
+            immediate = this.toBinary(value, 8);
+        }
+    
+        return `${immediate}${C}${opcode};`;
+    }
+
+    private not(args: string[]): string{
+        const A = this.symbolToBinary('r0', 4);
+        const B = this.symbolToBinary(args[2], 4);
+        const C = this.symbolToBinary(args[1], 4);
+        const opcode = this.symbolToBinary('nor', 4);
+        return `${A}${B}${C}${opcode}`
+    }
+
+    private lsh(args: string []): string{
+        const A = this.symbolToBinary(args[2], 4);
+        const B = this.symbolToBinary(args[2], 4);
+        const C = this.symbolToBinary(args[1], 4);
+        const opcode = this.symbolToBinary('add', 4);
+        return `${A}${B}${C}${opcode}`
+    }
+
+    private cmp(args: string[]): string{
+        const A = this.symbolToBinary(args[1], 4)
+        const B = this.symbolToBinary(args[2], 4)
+        const C = this.symbolToBinary('r0', 4);
+        const opcode = this.symbolToBinary('sub', 4);
+        return `${A}${B}${C}${opcode}`
+    }
+
+    private mov(args: string[]): string{
+        const A = this.symbolToBinary(args[2], 4);
+        const B = this.symbolToBinary('r0', 4);
+        const C = this.symbolToBinary(args[1], 4);
+        const opcode = this.symbolToBinary('add', 4);
+        return `${A}${B}${C}${opcode}`;
+    }
+
+    private brh(args: string[]): string{
+        const opcode = this.symbolToBinary(args[0], 4);
+        const immediate = this.toBinary(Number(args[1]), 8);
+        const condition = this.symbolToBinary(args[2], 4);
+        return `${immediate}${condition}${opcode}`;
+    }
+
+    private jmp(args: string []): string{
+        const opcode = this.symbolToBinary(args[0], 4)
+        const immediate = this.toBinary(Number(args[1]), 8);
+        return `${immediate}${'0000'}${opcode}`;
+    }
+
+    private rsh(args: string[]): string {
+        const opcode = this.symbolToBinary(args[0], 4);
+        const regC = this.symbolToBinary(args[1], 4);
+        const regA = this.symbolToBinary(args[2], 4);
+        return `${regA}${'0000'}${regC}${opcode}`;
+    }
+
     private memoryOperation(args: string[]): string{
-        const opcode = this.symbolToBinary(args[0].toLowerCase(), 4);
+        const opcode = this.symbolToBinary(args[0], 4);
         const regC = this.symbolToBinary(args[1], 4)
         const regA = this.symbolToBinary(args[2], 4);
         const immediate = this.toBinary(Number(args[3]), 4);
@@ -183,7 +325,7 @@ export class Assembler {
     private immediateOperation(args: string[]): string{
         const immediate = this.toBinary(Number(args[2]), 8);
         const reg = this.symbolToBinary(args[1], 4);
-        const opcodeBinary = this.symbolToBinary(args[0].toLowerCase(), 4);
+        const opcodeBinary = this.symbolToBinary(args[0], 4);
         const assembled = `${immediate}${reg}${opcodeBinary}`;
         return assembled;
     }
@@ -192,7 +334,7 @@ export class Assembler {
         const regABin = this.symbolToBinary(args[2], 4);
         const regBBin = this.symbolToBinary(args[3], 4);
         const regCBin = this.symbolToBinary(args[1], 4);
-        const opcodeBin = this.symbolToBinary(args[0].toLowerCase(), 4);
+        const opcodeBin = this.symbolToBinary(args[0], 4);
         const assembled = `${regABin}${regBBin}${regCBin}${opcodeBin}`;
         return assembled;
     }
@@ -239,9 +381,6 @@ export class Assembler {
     }    
 
     private toBinary(value: number, bits: number): string {
-        if (value < 0) {
-            throw new Error(`Value cannot be negative: ${value}`);
-        }
         const binary = value.toString(2);
         if (binary.length > bits) {
             throw new Error(`Value ${value} exceeds the limit of ${bits} bits`);
@@ -250,7 +389,7 @@ export class Assembler {
     }
     
     private symbolToBinary(symbol: string, bits: number): string {
-        const value = this.symbols.get(symbol);
+        const value = this.symbols.get(symbol.toLowerCase());
         if (value === undefined) {
             throw new Error(`Symbol not found: ${symbol}`);
         }

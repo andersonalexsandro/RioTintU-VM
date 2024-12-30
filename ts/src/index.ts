@@ -43,6 +43,7 @@ memoryMapper.map(screen, screenStart, screenStart + Screen.nBytesAlocated - 1, t
 memoryMapper.map(numberDisplay, numberDisplayStart, numberDisplayStart + NumberDisplay.nBytesAlocated - 1, true);
 
 cpu = new CPU(memoryMapper, rom, registers, flags, pc);
+
 const assembler = new Assembler('./src/assembler/assembly', './src/assembler/assembled');
 assembler.assembleFiles();
 

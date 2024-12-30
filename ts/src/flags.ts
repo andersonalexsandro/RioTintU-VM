@@ -1,13 +1,13 @@
 
 export enum FlagCode{
-    ZERO = 0,
-    NOT_ZERO = 1,
-    COUT = 2,
-    NOT_COUT = 3,
-    MSB = 4,
-    NOT_MSB = 5,
-    EVEN = 6,
-    NOT_EVEN = 7
+    NOT_MSB = 0,
+    MSB = 1,
+    NOT_COUT = 2,
+    COUT = 3,
+    ZERO = 4,
+    NOT_ZERO = 5,
+    NOT_EVEN = 6,
+    EVEN = 7
 }
 
 export class Flags {

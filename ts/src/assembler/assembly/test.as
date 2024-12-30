@@ -1,2 +1,2 @@
-LOD r2 r1 10
-STR r2 r1 10
+NOT r2 r1
+NEG r2 r1
