@@ -40,7 +40,6 @@ export default class CPU {
 
     step() {
         const instruction = this.fetch();
-        console.log('STEP')
         return this.execute(instruction);
     }
     

@@ -10,6 +10,7 @@ export class ProgramCounter8 {
     }
 
     public incremment(): void{
+        console.log('STEP')
         this.counter > 255 ? this.counter=0 : this.counter++;
     }
     
