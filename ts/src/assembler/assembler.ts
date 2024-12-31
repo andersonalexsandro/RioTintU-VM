@@ -47,12 +47,28 @@ export class Assembler {
     private labels = new Map<string, number>();
     private symbols = new Map<string, number>();
     private fileManager: FileManager;
-    public assemblyFiles: Map<string, string[]> = new Map<string, string[]>();
-    public filesAssembled: Map<string, string[]> = new Map<string, string[]>();
+    private assemblyFiles: Map<string, string[]> = new Map<string, string[]>();
+    private filesAssembled: Map<string, string[]> = new Map<string, string[]>();
 
     constructor(fileManager: FileManager) {
         this.fileManager = fileManager;
         this.initializeSymbols();
+    }
+
+    public getAssemblyFiles(): Map<string, string[]> {
+        return this.assemblyFiles;
+    }
+
+    public setAssemblyFiles(files: Map<string, string[]>): void {
+        this.assemblyFiles = files;
+    }
+
+    public getFilesAssembled(): Map<string, string[]> {
+        return this.filesAssembled;
+    }
+
+    public setFilesAssembled(files: Map<string, string[]>): void {
+        this.filesAssembled = files;
     }
 
     private initializeSymbols() {
