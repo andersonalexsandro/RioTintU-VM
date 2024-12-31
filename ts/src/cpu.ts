@@ -59,6 +59,7 @@ export default class CPU {
 
         switch (OPCODE) {
             case Instructions.NOP:
+                this.pc.incremment()
                 break;
             case Instructions.HLT:
                 return true;

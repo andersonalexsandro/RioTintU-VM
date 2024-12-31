@@ -13,6 +13,10 @@ export class Registers implements Memory {
 
     }
 
+    getRegisterNames(): string[]{
+        return this.registerNames;
+    }
+
     setRegisterNames(registerNames: string[]){
         this.registerNames = registerNames;
         for (let i=0; i< registerNames.length; i++){

@@ -124,7 +124,7 @@ export class Assembler {
     }
     
 
-    private assemble(assemblyList: string[]): string[]{
+    public assemble(assemblyList: string[]): string[]{
         const machineCode: string[] = [];
         this.resolveLabels(assemblyList);
     

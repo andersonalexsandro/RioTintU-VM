@@ -22,7 +22,7 @@ export function RioTintUInit(fileManager: FileManager) {
     
     const rom = new ProgramRom16(romLength);
     const registers = new Registers(registersLength);
-    registers.setRegisterNames(['r0', 'r1', 'r2', 'r3', 'r4', 'r5,', 'r6', 'r7', 'r8', 'r9', 'r10', 'r11', 'r12', 'r13', 'r14', 'r15']);
+    registers.setRegisterNames(['r0', 'r1', 'r2', 'r3', 'r4', 'r5', 'r6', 'r7', 'r8', 'r9', 'r10', 'r11', 'r12', 'r13', 'r14', 'r15']);
     const flags = new Flags();
     const pc = new ProgramCounter8();
     const ram = new Ram(ramLength);
@@ -36,7 +36,6 @@ export function RioTintUInit(fileManager: FileManager) {
     
     const cpu = new CPU(memoryMapper, rom, registers, flags, pc);
     const assembler = new Assembler(fileManager);
-    assembler.assembleFiles();
     
     return {
         cpu,
@@ -48,11 +47,9 @@ export function RioTintUInit(fileManager: FileManager) {
         numberDisplay,
         screen,
         memoryMapper,
+        assembler
     };
 }
-
-const fileManager = new NodeFileReader('./src/assembler/assembly', './src/assembler/assembled');
-RioTintUInit(fileManager);
 
 
 
