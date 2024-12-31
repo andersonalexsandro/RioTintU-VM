@@ -8,8 +8,10 @@ import Ram from "./ram";
 import { Registers } from "./registers";
 import Screen from "./screen";
 import { Assembler } from "./assembler/assembler";
+import { FileManager } from "./assembler/fileManager";
+import { NodeFileReader } from "./nodeFileReader";
 
-export function RioTintUInit() {
+export function RioTintUInit(fileManager: FileManager) {
     const ramLength = 256;
     const screenStart = 246;
     const screenWidth = 32;
@@ -33,7 +35,7 @@ export function RioTintUInit() {
     memoryMapper.map(numberDisplay, numberDisplayStart, numberDisplayStart + NumberDisplay.nBytesAlocated - 1, true);
     
     const cpu = new CPU(memoryMapper, rom, registers, flags, pc);
-    const assembler = new Assembler('./src/assembler/assembly', './src/assembler/assembled');
+    const assembler = new Assembler(fileManager);
     assembler.assembleFiles();
     
     return {
@@ -49,7 +51,8 @@ export function RioTintUInit() {
     };
 }
 
-RioTintUInit();
+const fileManager = new NodeFileReader('./src/assembler/assembly', './src/assembler/assembled');
+RioTintUInit(fileManager);
 
 
 

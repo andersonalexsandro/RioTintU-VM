@@ -1,6 +1,7 @@
 import { log } from 'console';
 import * as fs from 'fs';
 import * as path from 'path';
+import { FileManager } from './fileManager';
 
 interface ErrorInfo {
     line: number,
@@ -44,16 +45,14 @@ export class Assembler {
     ];
 
     private labels = new Map<string, number>();
-    private asPath: string;
-    private mcPath: string;
     private symbols = new Map<string, number>();
-    public filesMap: Map<string, string[]>;
+    private fileManager: FileManager;
+    public assemblyFiles: Map<string, string[]> = new Map<string, string[]>();
+    public filesAssembled: Map<string, string[]> = new Map<string, string[]>();
 
-    constructor(asPath: string, mcPath: string) {
-        this.asPath = asPath;
-        this.mcPath = mcPath;
+    constructor(fileManager: FileManager) {
+        this.fileManager = fileManager;
         this.initializeSymbols();
-        this.filesMap = this.readAllFilesInAssemblyDir();
     }
 
     private initializeSymbols() {
@@ -80,76 +79,32 @@ export class Assembler {
         for (const [index, symbol] of this.ports.entries()) {
             this.symbols.set(symbol, index + 246);
         }
+    }
+
+    public assembleFiles(): void {
+        const assemblyFiles = this.fileManager.getLines();
+        const assembledFiles = new Map<string, string[]>();
     
-    }
-
-    private isNumeric(value: string): boolean {
-        return !isNaN(Number(value));
-    }
-
-    private readAndFilterFile(filePath: string): string[] {
-        try {
-            const data = fs.readFileSync(filePath, 'utf8');
-            const lines = data.split('\n');
+        assemblyFiles.forEach((lines, fileName) => {
             const filteredLines = lines.filter(line => {
                 const trimmedLine = line.trim();
                 return trimmedLine && !trimmedLine.startsWith('/') && !trimmedLine.startsWith('#');
             });
-            return filteredLines;
-        } catch (err) {
-            console.error(`Error to Read File ${filePath}:`, err);
-            return [];
-        }
-    }
-
-    private readAllFilesInAssemblyDir(): Map<string, string[]> {
-        const assemblyDir = path.resolve(this.asPath);
-        const fileLinesMap = new Map<string, string[]>();
-
-        try {
-            const files = fs.readdirSync(assemblyDir);
-            const asFiles = files.filter(file => path.extname(file) === '.as');
-
-            asFiles.forEach(file => {
-                const filePath = path.join(assemblyDir, file);
-                const filteredLines = this.readAndFilterFile(filePath);
-                fileLinesMap.set(file, filteredLines);
-            });
-        } catch (err) {
-            console.error(`Error to Read File in Folder ${assemblyDir}:`, err);
-        }
-
-        return fileLinesMap;
-    }
-
-    public assembleFiles() {
-        const assembledDir = path.resolve(this.mcPath);
     
-        if (!fs.existsSync(assembledDir)) {
-            fs.mkdirSync(assembledDir, { recursive: true });
-        }
-    
-        for (const [fileName, assemblyList] of this.filesMap.entries()) {
-            try {
-                const errors = this.validate(assemblyList);
-    
-                if (errors.length > 0) {
-                    console.error(`Errors found in file ${fileName}:`);
-                    errors.forEach(error => console.error(`Line ${error.line + 1}: ${error.message}`));
-                    continue;
-                }
-    
-                const machineCode = this.assemble(assemblyList);
-    
-                const outputFileName = fileName.replace('.as', '.mc');
-                const outputPath = path.join(assembledDir, outputFileName);
-    
-                fs.writeFileSync(outputPath, machineCode.join('\n'), 'utf8');
-                console.log(`Successfully assembled ${fileName} to ${outputPath}`);
-            } catch (err) {
-                console.error(`Failed to assemble ${fileName}:`, err);
+            const errors = this.validate(filteredLines);
+            if (errors.length > 0) {
+                console.error(`Errors found in file ${fileName}:`);
+                errors.forEach(error => console.error(`Line ${error.line + 1}: ${error.message}`));
+                return;
             }
-        }
+    
+            const machineCode = this.assemble(filteredLines);
+            assembledFiles.set(fileName.replace('.as', '.mc'), machineCode);
+        });
+    
+        this.fileManager.setLines(assembledFiles);
+    
+        console.log('Assembly process completed successfully!');
     }
     
 
@@ -576,5 +531,9 @@ export class Assembler {
             throw new Error(`Symbol not found: ${symbol}`);
         }
         return this.toBinary(value, bits);
-    }    
+    }   
+    
+    private isNumeric(value: string): boolean {
+        return !isNaN(Number(value));
+    }
 }
