@@ -9,7 +9,6 @@ import { Registers } from "./registers";
 import Screen from "./screen";
 import { Assembler } from "./assembler/assembler";
 import { FileManager } from "./assembler/fileManager";
-import { NodeFileReader } from "./nodeFileReader";
 
 export function RioTintUInit(fileManager: FileManager) {
     const ramLength = 256;
