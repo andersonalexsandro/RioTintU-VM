@@ -50,7 +50,5 @@ export function RioTintUInit(fileManager: FileManager) {
     };
 }
 
-
-
 export { CPU, ProgramRom16, Registers, Flags, ProgramCounter8, NumberDisplay, Screen, MemoryMapper, Assembler };
 

@@ -20,5 +20,4 @@ export class ProgramCounter8 {
     public toString(){
         return "Program Counter: " + this.counter
     }
-
 }
