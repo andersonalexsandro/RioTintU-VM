@@ -43,12 +43,10 @@ export class Assembler {
 
     private labels = new Map<string, number>();
     private symbols = new Map<string, number>();
-    private fileManager: FileManager;
     private assemblyFiles: Map<string, string[]> = new Map<string, string[]>();
     private filesAssembled: Map<string, string[]> = new Map<string, string[]>();
 
-    constructor(fileManager: FileManager) {
-        this.fileManager = fileManager;
+    constructor() {
         this.initializeSymbols();
     }
 
@@ -94,31 +92,31 @@ export class Assembler {
         }
     }
 
-    public assembleFiles(): void {
-        const assemblyFiles = this.fileManager.getLines();
-        const assembledFiles = new Map<string, string[]>();
+    // public assembleFiles(): void {
+    //     const assemblyFiles = this.fileManager.getLines();
+    //     const assembledFiles = new Map<string, string[]>();
     
-        assemblyFiles.forEach((lines, fileName) => {
-            const filteredLines = lines.filter(line => {
-                const trimmedLine = line.trim();
-                return trimmedLine && !trimmedLine.startsWith('/') && !trimmedLine.startsWith('#');
-            });
+    //     assemblyFiles.forEach((lines, fileName) => {
+    //         const filteredLines = lines.filter(line => {
+    //             const trimmedLine = line.trim();
+    //             return trimmedLine && !trimmedLine.startsWith('/') && !trimmedLine.startsWith('#');
+    //         });
     
-            const errors = this.validate(filteredLines);
-            if (errors.length > 0) {
-                console.error(`Errors found in file ${fileName}:`);
-                errors.forEach(error => console.error(`Line ${error.line + 1}: ${error.message}`));
-                return;
-            }
+    //         const errors = this.validate(filteredLines);
+    //         if (errors.length > 0) {
+    //             console.error(`Errors found in file ${fileName}:`);
+    //             errors.forEach(error => console.error(`Line ${error.line + 1}: ${error.message}`));
+    //             return;
+    //         }
     
-            const machineCode = this.assemble(filteredLines);
-            assembledFiles.set(fileName.replace('.as', '.mc'), machineCode);
-        });
+    //         const machineCode = this.assemble(filteredLines);
+    //         assembledFiles.set(fileName.replace('.as', '.mc'), machineCode);
+    //     });
     
-        this.fileManager.setLines(assembledFiles);
+    //     this.fileManager.setLines(assembledFiles);
     
-        console.log('Assembly process completed successfully!');
-    }
+    //     console.log('Assembly process completed successfully!');
+    // }
     
 
     public assemble(assemblyList: string[]): string[]{
