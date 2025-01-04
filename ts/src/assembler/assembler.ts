@@ -548,3 +548,5 @@ export class Assembler {
         return !isNaN(Number(value));
     }
 }
+
+export default Assembler;

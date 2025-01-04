@@ -10,7 +10,7 @@ import Screen from "./screen";
 import { Assembler } from "./assembler/assembler";
 import { FileManager } from "./assembler/fileManager";
 
-export function RioTintUInit(fileManager: FileManager) {
+export function RioTintUInit() {
     const ramLength = 256;
     const screenStart = 246;
     const screenWidth = 32;
@@ -34,7 +34,7 @@ export function RioTintUInit(fileManager: FileManager) {
     memoryMapper.map(numberDisplay, numberDisplayStart, numberDisplayStart + NumberDisplay.nBytesAlocated - 1, true);
     
     const cpu = new CPU(memoryMapper, rom, registers, flags, pc);
-    const assembler = new Assembler(fileManager);
+    const assembler = new Assembler();
     
     return {
         cpu,
