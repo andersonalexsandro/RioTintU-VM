@@ -1,6 +1,7 @@
 import { describe, expect, test } from '@jest/globals';
 import Assembler from '../src/assembler/assembler';
 import { Instructions } from '../src/cpu'; // Certifique-se de que `Instructions` contém todos os opcodes necessários.
+import { FlagCode } from '../src/flags';
 
 describe('Assembler', () => {
     const assembler = new Assembler();
@@ -123,6 +124,295 @@ describe('Assembler', () => {
         const opcode = toBinary(Instructions.JMP, 4);
         const immediate = toBinary(15, 8); // Defined constant resolves to 15
         expect(assembled[0]).toBe(immediate + '0000' + opcode);
+    });
+
+    test('BRH >0', () => {
+        const assembly = ['BRH >0 1'];
+        const assembled = assembler.assemble(assembly);
+        const immediate = toBinary(1, 8);
+        const condition = toBinary(FlagCode.NOT_MSB, 4)
+        const opcode = toBinary(Instructions.BRH, 4)
+        expect(assembled[0]).toBe(immediate + condition + opcode);
+    })
+    test('BRH <0', () => {
+        const assembly = ['BRH <0 1'];
+        const assembled = assembler.assemble(assembly);
+        const immediate = toBinary(1, 8);
+        const condition = toBinary(FlagCode.MSB, 4)
+        const opcode = toBinary(Instructions.BRH, 4)
+        expect(assembled[0]).toBe(immediate + condition + opcode);
+    })
+
+    test('BRH <', () => {
+        const assembly = ['BRH < 1'];
+        const assembled = assembler.assemble(assembly);
+        const immediate = toBinary(1, 8);
+        const condition = toBinary(FlagCode.NOT_COUT, 4)
+        const opcode = toBinary(Instructions.BRH, 4)
+        expect(assembled[0]).toBe(immediate + condition + opcode);
+    })
+
+    test('BRH >=', () => {
+        const assembly = ['BRH >= 1'];
+        const assembled = assembler.assemble(assembly);
+        const immediate = toBinary(1, 8);
+        const condition = toBinary(FlagCode.COUT, 4)
+        const opcode = toBinary(Instructions.BRH, 4)
+        expect(assembled[0]).toBe(immediate + condition + opcode);
+    })
+
+    test('BRH =', () => {
+        const assembly = ['BRH = 1'];
+        const assembled = assembler.assemble(assembly);
+        const immediate = toBinary(1, 8);
+        const condition = toBinary(FlagCode.ZERO, 4)
+        const opcode = toBinary(Instructions.BRH, 4)
+        expect(assembled[0]).toBe(immediate + condition + opcode);
+    })
+
+    test('BRH !=', () => {
+        const assembly = ['BRH != 1'];
+        const assembled = assembler.assemble(assembly);
+        const immediate = toBinary(1, 8);
+        const condition = toBinary(FlagCode.NOT_ZERO, 4)
+        const opcode = toBinary(Instructions.BRH, 4)
+        expect(assembled[0]).toBe(immediate + condition + opcode);
+    })
+
+    test('BRH !%2', () => {
+        const assembly = ['BRH !%2 1'];
+        const assembled = assembler.assemble(assembly);
+        const immediate = toBinary(1, 8);
+        const condition = toBinary(FlagCode.NOT_EVEN, 4)
+        const opcode = toBinary(Instructions.BRH, 4)
+        expect(assembled[0]).toBe(immediate + condition + opcode);
+    })
+
+    test('BRH %2', () => {
+        const assembly = ['BRH %2 1'];
+        const assembled = assembler.assemble(assembly);
+        const immediate = toBinary(1, 8);
+        const condition = toBinary(FlagCode.EVEN, 4)
+        const opcode = toBinary(Instructions.BRH, 4)
+        expect(assembled[0]).toBe(immediate + condition + opcode);
+    })
+
+    test('BRH pos', () => {
+        const assembly = ['BRH pos 1'];
+        const assembled = assembler.assemble(assembly);
+        const immediate = toBinary(1, 8);
+        const condition = toBinary(FlagCode.NOT_MSB, 4); // Same as >0
+        const opcode = toBinary(Instructions.BRH, 4);
+        expect(assembled[0]).toBe(immediate + condition + opcode);
+    });
+    
+    test('BRH neg', () => {
+        const assembly = ['BRH neg 1'];
+        const assembled = assembler.assemble(assembly);
+        const immediate = toBinary(1, 8);
+        const condition = toBinary(FlagCode.MSB, 4); // Same as <0
+        const opcode = toBinary(Instructions.BRH, 4);
+        expect(assembled[0]).toBe(immediate + condition + opcode);
+    });
+    
+    test('BRH lt', () => {
+        const assembly = ['BRH lt 1'];
+        const assembled = assembler.assemble(assembly);
+        const immediate = toBinary(1, 8);
+        const condition = toBinary(FlagCode.NOT_COUT, 4); // Same as <
+        const opcode = toBinary(Instructions.BRH, 4);
+        expect(assembled[0]).toBe(immediate + condition + opcode);
+    });
+    
+    test('BRH ge', () => {
+        const assembly = ['BRH ge 1'];
+        const assembled = assembler.assemble(assembly);
+        const immediate = toBinary(1, 8);
+        const condition = toBinary(FlagCode.COUT, 4); // Same as >=
+        const opcode = toBinary(Instructions.BRH, 4);
+        expect(assembled[0]).toBe(immediate + condition + opcode);
+    });
+    
+    test('BRH eq', () => {
+        const assembly = ['BRH eq 1'];
+        const assembled = assembler.assemble(assembly);
+        const immediate = toBinary(1, 8);
+        const condition = toBinary(FlagCode.ZERO, 4); // Same as =
+        const opcode = toBinary(Instructions.BRH, 4);
+        expect(assembled[0]).toBe(immediate + condition + opcode);
+    });
+    
+    test('BRH ne', () => {
+        const assembly = ['BRH ne 1'];
+        const assembled = assembler.assemble(assembly);
+        const immediate = toBinary(1, 8);
+        const condition = toBinary(FlagCode.NOT_ZERO, 4); // Same as !=
+        const opcode = toBinary(Instructions.BRH, 4);
+        expect(assembled[0]).toBe(immediate + condition + opcode);
+    });
+    
+    test('BRH odd', () => {
+        const assembly = ['BRH odd 1'];
+        const assembled = assembler.assemble(assembly);
+        const immediate = toBinary(1, 8);
+        const condition = toBinary(FlagCode.NOT_EVEN, 4); // Same as !%2
+        const opcode = toBinary(Instructions.BRH, 4);
+        expect(assembled[0]).toBe(immediate + condition + opcode);
+    });
+    
+    test('BRH even', () => {
+        const assembly = ['BRH even 1'];
+        const assembled = assembler.assemble(assembly);
+        const immediate = toBinary(1, 8);
+        const condition = toBinary(FlagCode.EVEN, 4); // Same as %2
+        const opcode = toBinary(Instructions.BRH, 4);
+        expect(assembled[0]).toBe(immediate + condition + opcode);
+    });
+    
+    test('BRH notmsb', () => {
+        const assembly = ['BRH notmsb 1'];
+        const assembled = assembler.assemble(assembly);
+        const immediate = toBinary(1, 8);
+        const condition = toBinary(FlagCode.NOT_MSB, 4); // Same as pos or >0
+        const opcode = toBinary(Instructions.BRH, 4);
+        expect(assembled[0]).toBe(immediate + condition + opcode);
+    });
+    
+    test('BRH msb', () => {
+        const assembly = ['BRH msb 1'];
+        const assembled = assembler.assemble(assembly);
+        const immediate = toBinary(1, 8);
+        const condition = toBinary(FlagCode.MSB, 4); // Same as neg or <0
+        const opcode = toBinary(Instructions.BRH, 4);
+        expect(assembled[0]).toBe(immediate + condition + opcode);
+    });
+    
+    test('BRH notcarry', () => {
+        const assembly = ['BRH notcarry 1'];
+        const assembled = assembler.assemble(assembly);
+        const immediate = toBinary(1, 8);
+        const condition = toBinary(FlagCode.NOT_COUT, 4); // Same as lt or <
+        const opcode = toBinary(Instructions.BRH, 4);
+        expect(assembled[0]).toBe(immediate + condition + opcode);
+    });
+    
+    test('BRH carry', () => {
+        const assembly = ['BRH carry 1'];
+        const assembled = assembler.assemble(assembly);
+        const immediate = toBinary(1, 8);
+        const condition = toBinary(FlagCode.COUT, 4); // Same as ge or >=
+        const opcode = toBinary(Instructions.BRH, 4);
+        expect(assembled[0]).toBe(immediate + condition + opcode);
+    });
+    
+    test('BRH zero', () => {
+        const assembly = ['BRH zero 1'];
+        const assembled = assembler.assemble(assembly);
+        const immediate = toBinary(1, 8);
+        const condition = toBinary(FlagCode.ZERO, 4); // Same as eq or =
+        const opcode = toBinary(Instructions.BRH, 4);
+        expect(assembled[0]).toBe(immediate + condition + opcode);
+    });
+    
+    test('BRH notzero', () => {
+        const assembly = ['BRH notzero 1'];
+        const assembled = assembler.assemble(assembly);
+        const immediate = toBinary(1, 8);
+        const condition = toBinary(FlagCode.NOT_ZERO, 4); // Same as ne or !=
+        const opcode = toBinary(Instructions.BRH, 4);
+        expect(assembled[0]).toBe(immediate + condition + opcode);
+    });
+    
+    test('BRH noteven', () => {
+        const assembly = ['BRH noteven 1'];
+        const assembled = assembler.assemble(assembly);
+        const immediate = toBinary(1, 8);
+        const condition = toBinary(FlagCode.NOT_EVEN, 4); // Same as odd or !%2
+        const opcode = toBinary(Instructions.BRH, 4);
+        expect(assembled[0]).toBe(immediate + condition + opcode);
+    });
+    
+    test('BRH even (symbol)', () => {
+        const assembly = ['BRH even 1'];
+        const assembled = assembler.assemble(assembly);
+        const immediate = toBinary(1, 8);
+        const condition = toBinary(FlagCode.EVEN, 4); // Same as %2
+        const opcode = toBinary(Instructions.BRH, 4);
+        expect(assembled[0]).toBe(immediate + condition + opcode);
+    });
+
+    const baseAddress = 246; // Base address for ports
+
+    test('LDI using port clear_sreen_buffer', () => {
+        const assembly = ['LDI r1 clear_sreen_buffer'];
+        const assembled = assembler.assemble(assembly);
+        const opcode = toBinary(Instructions.LDI, 4);
+        const r1 = toBinary(1, 4); // Register r1
+        const immediate = toBinary(baseAddress, 8); // Address of 'clear_sreen_buffer'
+        expect(assembled[0]).toBe(immediate + r1 + opcode);
+    });
+
+    test('LDI using port buffer_screen', () => {
+        const assembly = ['LDI r2 buffer_screen'];
+        const assembled = assembler.assemble(assembly);
+        const opcode = toBinary(Instructions.LDI, 4);
+        const r2 = toBinary(2, 4); // Register r2
+        const immediate = toBinary(baseAddress + 1, 8); // Address of 'buffer_screen'
+        expect(assembled[0]).toBe(immediate + r2 + opcode);
+    });
+
+    test('LDI using port clear_pixel', () => {
+        const assembly = ['LDI r3 clear_pixel'];
+        const assembled = assembler.assemble(assembly);
+        const opcode = toBinary(Instructions.LDI, 4);
+        const r3 = toBinary(3, 4); // Register r3
+        const immediate = toBinary(baseAddress + 2, 8); // Address of 'clear_pixel'
+        expect(assembled[0]).toBe(immediate + r3 + opcode);
+    });
+
+    test('LDI using port draw_pixel', () => {
+        const assembly = ['LDI r4 draw_pixel'];
+        const assembled = assembler.assemble(assembly);
+        const opcode = toBinary(Instructions.LDI, 4);
+        const r4 = toBinary(4, 4); // Register r4
+        const immediate = toBinary(baseAddress + 3, 8); // Address of 'draw_pixel'
+        expect(assembled[0]).toBe(immediate + r4 + opcode);
+    });
+
+    test('LDI using port pixel_x', () => {
+        const assembly = ['LDI r5 pixel_x'];
+        const assembled = assembler.assemble(assembly);
+        const opcode = toBinary(Instructions.LDI, 4);
+        const r5 = toBinary(5, 4); // Register r5
+        const immediate = toBinary(baseAddress + 4, 8); // Address of 'pixel_x'
+        expect(assembled[0]).toBe(immediate + r5 + opcode);
+    });
+
+    test('LDI using port pixel_y', () => {
+        const assembly = ['LDI r6 pixel_y'];
+        const assembled = assembler.assemble(assembly);
+        const opcode = toBinary(Instructions.LDI, 4);
+        const r6 = toBinary(6, 4); // Register r6
+        const immediate = toBinary(baseAddress + 5, 8); // Address of 'pixel_y'
+        expect(assembled[0]).toBe(immediate + r6 + opcode);
+    });
+
+    test('LDI using port number_display_low_8', () => {
+        const assembly = ['LDI r7 number_display_low_8'];
+        const assembled = assembler.assemble(assembly);
+        const opcode = toBinary(Instructions.LDI, 4);
+        const r7 = toBinary(7, 4); // Register r7
+        const immediate = toBinary(baseAddress + 6, 8); // Address of 'number_display_low_8'
+        expect(assembled[0]).toBe(immediate + r7 + opcode);
+    });
+
+    test('LDI using port number_display_high8', () => {
+        const assembly = ['LDI r8 number_display_high8'];
+        const assembled = assembler.assemble(assembly);
+        const opcode = toBinary(Instructions.LDI, 4);
+        const r8 = toBinary(8, 4); // Register r8
+        const immediate = toBinary(baseAddress + 7, 8); // Address of 'number_display_high8'
+        expect(assembled[0]).toBe(immediate + r8 + opcode);
     });
 });
 

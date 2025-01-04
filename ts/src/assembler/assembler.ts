@@ -296,8 +296,8 @@ export class Assembler {
 
     private brh(args: string[]): string {
         const opcode = this.symbolToBinary(args[0], 4);
-        const condition = this.symbolToBinary(args[2], 4);
-        const immediate = this.toBinary(args[1], 8);
+        const condition = this.symbolToBinary(args[1], 4);
+        const immediate = this.toBinary(args[2], 8);
         return `${immediate}${condition}${opcode}`;
     }
 
