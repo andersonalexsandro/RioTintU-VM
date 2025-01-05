@@ -33,6 +33,7 @@ export class Registers implements Memory {
     }
     
     set(address: number, value: number): void {
+        if(address === 0) return;
         return this.dataView.setUint8(address, value);
     }
 

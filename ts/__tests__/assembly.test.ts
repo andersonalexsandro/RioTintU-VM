@@ -340,6 +340,25 @@ describe('Assembler', () => {
         expect(assembled[0]).toBe(immediate + condition + opcode);
     });
 
+    test('BRH with define', () =>{
+        const assembly = ['define x 10', 'BRH = x']
+        const assembled = assembler.assemble(assembly);
+        const opcode = toBinary(Instructions.BRH, 4);
+        const condition = toBinary(FlagCode.ZERO, 4);
+        const immediate = toBinary(10, 8);
+        expect(assembled[0]).toBe(immediate + condition + opcode);
+    })
+
+    test('BRH with label', () =>{
+        const assembly = ['.x', 'BRH = .x']
+        const assembled = assembler.assemble(assembly);
+        const opcode = toBinary(Instructions.BRH, 4);
+        const condition = toBinary(FlagCode.ZERO, 4);
+        const immediate = toBinary(0, 8);
+        expect(assembled[0]).toBe(immediate + condition + opcode);
+    })
+
+
     const baseAddress = 246; // Base address for ports
 
     test('LDI using port clear_sreen_buffer', () => {
