@@ -414,10 +414,6 @@ describe('Assembler', () => {
         expect(assembled[0]).toBe(immediate + r8 + opcode);
     });
 
-    test('Define with i/o Ports', () => {
-        const assembly = ['define ports']
-    });
-
     test('LDI using define and I/O port', () => {
         const assembly = [
             'DEFINE PORT pixel_x',
@@ -440,9 +436,33 @@ describe('Assembler', () => {
         const assembled = assembler.assemble(assembly);
         const opcode = toBinary(Instructions.LDI, 4);
         const immediate = toBinary(246 + 4, 8); // Address of 'pixel_x' (base 246 + 4)
-        const r1 = toBinary(1, 4); // Register r1
-        
+        const r1 = toBinary(1, 4); // Register r1        
         expect(assembled[0]).toBe(immediate + r1 + opcode);
+    });
+
+    test('ADI using define and I/O port (pixel_x)', () => {
+        const assembly = [
+            'DEFINE PORT pixel_x',
+            'ADI r2 PORT'
+        ];
+        const assembled = assembler.assemble(assembly);
+        const opcode = toBinary(Instructions.ADI, 4);
+        const r2 = toBinary(2, 4); // Register r2
+        const immediate = toBinary(246 + 4, 8); // Address of 'pixel_x' (base 246 + 4)
+        expect(assembled[0]).toBe(immediate + r2 + opcode);
+    });
+    
+    test('ADI using define with I/O port (number_display_high8)', () => {
+        const assembly = [
+            'DEFINE PORT number_display_high8',
+            'DEFINE PORT2 PORT',
+            'ADI r3 PORT2'
+        ];
+        const assembled = assembler.assemble(assembly);
+        const opcode = toBinary(Instructions.ADI, 4);
+        const r3 = toBinary(3, 4); // Register r3
+        const immediate = toBinary(246 + 7, 8); // Address of 'number_display_high8' (base 246 + 7)
+        expect(assembled[0]).toBe(immediate + r3 + opcode);
     });
 });
 

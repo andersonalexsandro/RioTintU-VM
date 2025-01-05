@@ -181,10 +181,13 @@ export class Assembler {
             const firstToken = tokens[0]?.toLowerCase();
     
             if (firstToken === 'define') {
-                let [op, symbol, value] = tokens;
+                let [def, symbol, value] = tokens;
+                console.log(tokens)
             
-                while (this.symbols.has(value.toLowerCase())) {
+                if (this.symbols.has(value.toLowerCase())) {
+                    console.log(value);
                     value = this.symbols.get(value.toLowerCase())!.toString();
+                    console.log(value);
                 }
             
                 this.symbols.set(symbol.toLowerCase(), parseInt(value, 10));
