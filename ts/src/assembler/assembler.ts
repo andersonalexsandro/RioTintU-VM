@@ -181,10 +181,12 @@ export class Assembler {
             const firstToken = tokens[0]?.toLowerCase();
     
             if (firstToken === 'define') {
-                const [_, symbol, value] = tokens;
-                if (!symbol || !value) {
-                    throw new Error(`Invalid define syntax at line ${i + 1}`);
+                let [op, symbol, value] = tokens;
+            
+                while (this.symbols.has(value.toLowerCase())) {
+                    value = this.symbols.get(value.toLowerCase())!.toString();
                 }
+            
                 this.symbols.set(symbol.toLowerCase(), parseInt(value, 10));
                 continue;
             }

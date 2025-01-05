@@ -114,7 +114,6 @@ describe('Assembler', () => {
         const assembled = assembler.assemble(assembly);
         const opcode = toBinary(Instructions.JMP, 4);
         const immediate = toBinary(0, 8); // `.label` resolves to address 0
-        console.log(assembled);
         expect(assembled[0]).toBe(immediate + '0000' + opcode);
     });
     
@@ -413,6 +412,37 @@ describe('Assembler', () => {
         const r8 = toBinary(8, 4); // Register r8
         const immediate = toBinary(baseAddress + 7, 8); // Address of 'number_display_high8'
         expect(assembled[0]).toBe(immediate + r8 + opcode);
+    });
+
+    test('Define with i/o Ports', () => {
+        const assembly = ['define ports']
+    });
+
+    test('LDI using define and I/O port', () => {
+        const assembly = [
+            'DEFINE PORT pixel_x',
+            'LDI r1 PORT'
+        ];
+        const assembled = assembler.assemble(assembly);
+        const opcode = toBinary(Instructions.LDI, 4);
+        const immediate = toBinary(246 + 4, 8); // Address of 'pixel_x' (base 246 + 4)
+        const r1 = toBinary(1, 4); // Register r1
+        
+        expect(assembled[0]).toBe(immediate + r1 + opcode);
+    });
+
+    test('LDI using define within define', () => {
+        const assembly = [
+            'DEFINE PORT pixel_x',
+            'DEFINE PORT2 PORT',
+            'LDI r1 PORT2'
+        ];
+        const assembled = assembler.assemble(assembly);
+        const opcode = toBinary(Instructions.LDI, 4);
+        const immediate = toBinary(246 + 4, 8); // Address of 'pixel_x' (base 246 + 4)
+        const r1 = toBinary(1, 4); // Register r1
+        
+        expect(assembled[0]).toBe(immediate + r1 + opcode);
     });
 });
 
