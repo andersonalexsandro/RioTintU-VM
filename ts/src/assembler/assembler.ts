@@ -182,12 +182,9 @@ export class Assembler {
     
             if (firstToken === 'define') {
                 let [def, symbol, value] = tokens;
-                console.log(tokens)
             
                 if (this.symbols.has(value.toLowerCase())) {
-                    console.log(value);
                     value = this.symbols.get(value.toLowerCase())!.toString();
-                    console.log(value);
                 }
             
                 this.symbols.set(symbol.toLowerCase(), parseInt(value, 10));
@@ -264,12 +261,12 @@ export class Assembler {
             immediate = this.toBinary(oneTwoComp, 8);
         }
     
-        return `${immediate}${C}${opcode};`;
+        return `${immediate}${C}${opcode}`;
     }
 
     private not(args: string[]): string{
-        const A = this.symbolToBinary('r0', 4);
-        const B = this.symbolToBinary(args[2], 4);
+        const A = this.symbolToBinary(args[2], 4);
+        const B = this.symbolToBinary('r0', 4);
         const C = this.symbolToBinary(args[1], 4);
         const opcode = this.symbolToBinary('nor', 4);
         return `${A}${B}${C}${opcode}`
@@ -317,12 +314,12 @@ export class Assembler {
         const opcode = this.symbolToBinary(args[0], 4);
         const regC = this.symbolToBinary(args[1], 4)
         const regA = this.symbolToBinary(args[2], 4);
-        const immediate = this.toBinary(Number(args[3]), 4);
+        const immediate = this.toBinary(Number(args[3] || 0 ), 4);
         return `${regA}${immediate}${regC}${opcode}`
     }
 
     private immediateOperation(args: string[]): string{
-        const immediate = this.toBinary(args[2], 8); // Handle both numeric literals and defined symbols
+        const immediate = this.toBinary(args[2] || 0, 8); // Handle both numeric literals and defined symbols
         const reg = this.symbolToBinary(args[1], 4);
         const opcodeBinary = this.symbolToBinary(args[0], 4);
         const assembled = `${immediate}${reg}${opcodeBinary}`;

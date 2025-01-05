@@ -492,9 +492,141 @@ describe('Assembler', () => {
     });
     
 
-    test('JID', () =>{
-        
-    })    
+    test('JID with offset', () =>{
+        const assembly = ['JID r1 10']
+        const assembled = assembler.assemble(assembly);
+        const opcode = toBinary(Instructions.JID, 4);
+        const reg = toBinary(1, 4);
+        const immediate = toBinary(10, 8);
+        expect(assembled[0]).toBe(immediate + reg + opcode)
+    });   
+    
+    test('JID without offset', () =>{
+        const assembly = ['JID r1']
+        const assembled = assembler.assemble(assembly);
+        const opcode = toBinary(Instructions.JID, 4);
+        const reg = toBinary(1, 4);
+        const immediate = toBinary(0, 8);
+        expect(assembled[0]).toBe(immediate + reg + opcode)
+    });   
+
+    test('ADC', () => {
+        const assembly = ['ADC r3 r1 r2'];
+        const assembled = assembler.assemble(assembly);
+        const opcode = toBinary(Instructions.ADC, 4);
+        const reg3 = toBinary(3, 4);
+        const reg2 = toBinary(2, 4);
+        const reg1 = toBinary(1, 4);
+        expect(assembled[0]).toBe(reg1 + reg2 + reg3 + opcode);
+    });
+
+    test('LOD with offset', () => {
+        const assembly = ['LOD r2 r1 10'];
+        const assembled = assembler.assemble(assembly);
+        const opcode = toBinary(Instructions.LOD, 4);
+        const reg1 = toBinary(1, 4);
+        const reg2 = toBinary(2, 4);
+        const offset = toBinary(10, 4);
+        expect(assembled[0]).toBe(reg1 + offset + reg2 + opcode);
+    })
+    
+    test('LOD without offset', () => {
+        const assembly = ['LOD r2 r1'];
+        const assembled = assembler.assemble(assembly);
+        const opcode = toBinary(Instructions.LOD, 4);
+        const reg1 = toBinary(1, 4);
+        const reg2 = toBinary(2, 4);
+        const offset = toBinary(0, 4);
+        expect(assembled[0]).toBe(reg1 + offset + reg2 + opcode);
+    })
+
+    test('STR with offset', () => {
+        const assembly = ['STR r2 r1 10'];
+        const assembled = assembler.assemble(assembly);
+        const opcode = toBinary(Instructions.STR, 4);
+        const reg1 = toBinary(1, 4);
+        const reg2 = toBinary(2, 4);
+        const offset = toBinary(10, 4);
+        expect(assembled[0]).toBe(reg1 + offset + reg2 + opcode);
+    })
+    
+    test('STR without offset', () => {
+        const assembly = ['STR r2 r1'];
+        const assembled = assembler.assemble(assembly);
+        const opcode = toBinary(Instructions.STR, 4);
+        const reg1 = toBinary(1, 4);
+        const reg2 = toBinary(2, 4);
+        const offset = toBinary(0, 4);
+        expect(assembled[0]).toBe(reg1 + offset + reg2 + opcode);
+    })
+
+    test('CMP', () => {
+        const assembly = ['CMP r1 r2'];
+        const assembled = assembler.assemble(assembly);
+        const opcode = toBinary(Instructions.SUB, 4);
+        const reg0 = toBinary(0, 4);
+        const reg2 = toBinary(2, 4);
+        const reg1 = toBinary(1, 4);
+        expect(reg1 + reg2 + reg0 + opcode);
+    })
+
+    test('MOV', () => {
+        const assembly = ['MOV r2 r1']
+        const assembled = assembler.assemble(assembly);
+        const opcode = toBinary(Instructions.ADD, 4);
+        const reg2 = toBinary(2, 4);
+        const reg1 = toBinary(1, 4);
+        const reg0 = toBinary(0, 4);
+        expect(assembled[0]).toBe(reg1 + reg0 + reg2 + opcode);
+    })
+
+    test('LSH', () => {
+        const assembly = ['LSH r2 r1'];
+        const assembled = assembler.assemble(assembly);
+        const opcode = toBinary(Instructions.ADD, 4);
+        const reg2 = toBinary(2, 4);
+        const reg1 = toBinary(1, 4);
+        expect(assembled[0]).toBe(reg1 + reg1 + reg2 + opcode);
+    });
+
+    test('INC', () => {
+        const assembly = ['INC r1'];
+        const assembled = assembler.assemble(assembly);
+        const opcode = toBinary(Instructions.ADI, 4);
+        const reg1 = toBinary(1, 4);
+        const immediate = toBinary(1, 8);
+        expect(immediate + reg1 + opcode);
+    });
+
+    test('DEC', () => {
+        const assembly = ['DEC r1'];
+        const assembled = assembler.assemble(assembly);
+        const opcode = toBinary(Instructions.ADI, 4);
+        const reg1 = toBinary(1, 4);
+        const immediate = toBinary(-1, 8);
+        expect(assembled[0]).toBe(immediate + reg1 + opcode);
+    });
+
+    test('NOT', () => {
+        const assembly = ['NOT r2 r1'];
+        const assembled = assembler.assemble(assembly);
+        const opcode = toBinary(Instructions.NOR, 4);
+        const reg2 = toBinary(2, 4);
+        const reg0 = toBinary(0, 4);
+        const reg1 = toBinary(1, 4);
+        expect(assembled[0]).toBe(reg1 + reg0 + reg2 + opcode);
+    })
+
+
+    test('NEG', () => {
+        const assembly = ['NEG r2 r1'];
+        const assembled = assembler.assemble(assembly);
+        const opcode = toBinary(Instructions.SUB, 4);
+        const reg2 = toBinary(2, 4);
+        const reg0 = toBinary(0, 4);
+        const reg1 = toBinary(1, 4);
+        expect(assembled[0]).toBe(reg0 + reg1 + reg2 + opcode);
+    })
 });
 
 const toBinary = (value: number, nBits: number): string => {
