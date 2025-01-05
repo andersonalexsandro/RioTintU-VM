@@ -339,10 +339,7 @@ export class Assembler {
     }
     
     private symbolToBinary(symbol: string, bits: number): string {
-        const value = this.symbols.get(symbol.toLowerCase());
-        if (value === undefined) {
-            throw new Error(`Symbol not found: ${symbol}`);
-        }
+        const value = this.symbols.get(symbol.toLowerCase())!;
         return this.toBinary(value, bits);
     }   
     

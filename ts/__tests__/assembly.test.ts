@@ -464,6 +464,37 @@ describe('Assembler', () => {
         const immediate = toBinary(246 + 7, 8); // Address of 'number_display_high8' (base 246 + 7)
         expect(assembled[0]).toBe(immediate + r3 + opcode);
     });
+
+    test('ADI using I/O port (number_display_high8)', () => {
+        const assembly = [
+            'ADI r3 number_display_high8'
+        ];
+        const assembled = assembler.assemble(assembly);
+        const opcode = toBinary(Instructions.ADI, 4);
+        const r3 = toBinary(3, 4); // Register r3
+        const immediate = toBinary(246 + 7, 8); // Address of 'number_display_high8' (base 246 + 7)
+        expect(assembled[0]).toBe(immediate + r3 + opcode);
+    });
+
+    test('ADD using define', () => {
+        const assembly = [
+            'DEFINE REG1 r4',
+            'DEFINE REG2 r5',
+            'DEFINE REG3 r6',
+            'ADD REG1 REG2 REG3'
+        ];
+        const assembled = assembler.assemble(assembly);
+        const opcode = toBinary(Instructions.ADD, 4);
+        const reg4 = toBinary(registers.indexOf('r4'), 4); // REG1 resolves to r4
+        const reg5 = toBinary(registers.indexOf('r5'), 4); // REG2 resolves to r5
+        const reg6 = toBinary(registers.indexOf('r6'), 4); // REG3 resolves to r6
+        expect(assembled[0]).toBe(reg5 + reg6 + reg4 + opcode);
+    });
+    
+
+    test('JID', () =>{
+        
+    })    
 });
 
 const toBinary = (value: number, nBits: number): string => {
