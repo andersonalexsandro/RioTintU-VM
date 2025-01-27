@@ -343,6 +343,112 @@ export class Assembler {
     private isNumeric(value: string): boolean {
         return !isNaN(Number(value));
     }
+
+    public validateAssembly(assemblyList: string[]): ErrorInfo[] {
+        const errors: ErrorInfo[] = [];
+    
+        for (let i = 0; i < assemblyList.length; i++) {
+            const line = assemblyList[i].trim();
+    
+            // Ignore empty lines and comments
+            if (!line || line.startsWith('/') || line.startsWith('#')) continue;
+    
+            const args = line.split(/\s+/);
+            const instruction = args[0]?.toLowerCase();
+    
+            // Check for invalid instructions
+            if (!this.opcodes.includes(instruction) && instruction !== 'define' && !instruction.startsWith('.')) {
+                errors.push({
+                    line: i,
+                    message: `Invalid instruction: ${instruction}`,
+                });
+                continue;
+            }
+    
+            // Check DEFINE
+            if (instruction === 'define') {
+                if (args.length < 3) {
+                    errors.push({
+                        line: i,
+                        message: `Invalid DEFINE syntax. Expected: "DEFINE SYMBOL VALUE"`,
+                    });
+                } else if (isNaN(Number(args[2])) && !this.symbols.has(args[2].toLowerCase())) {
+                    errors.push({
+                        line: i + 1,
+                        message: `Invalid DEFINE value: ${args[2]}`,
+                    });
+                }
+                continue;
+            }
+    
+            // Check labels
+            if (instruction.startsWith('.')) {
+                if (args.length > 1) {
+                    errors.push({
+                        line: i + 1,
+                        message: `Invalid label syntax. Labels should be standalone.`,
+                    });
+                }
+                continue;
+            }
+    
+            // Check arguments based on the instruction
+            const opcodeIndex = this.opcodes.indexOf(instruction);
+            if (opcodeIndex !== -1) {
+                const expectedArgs = this.getExpectedArguments(instruction);
+    
+                if (args.length  - 1 < expectedArgs) {
+                    errors.push({
+                        line: i,
+                        message: `Instruction "${instruction}" expects ${expectedArgs} arguments but got ${args.length - 1}.`,
+                    });
+                }
+    
+                // Check for invalid registers or symbols
+                args.slice(1).forEach((arg, index) => {
+                    if (!this.registers.includes(arg.toLowerCase()) &&
+                        !this.symbols.has(arg.toLowerCase()) &&
+                        !this.isNumeric(arg)) {
+                        errors.push({
+                            line: i + 1,
+                            message: `Invalid argument "${arg}" for instruction "${instruction}" at position ${index + 1}.`,
+                        });
+                    }
+                });
+            }
+        }
+    
+        return errors;
+    }
+    
+    private getExpectedArguments(instruction: string): number {
+        // Define the expected number of arguments for each instruction
+        const argumentCounts: { [key: string]: number } = {
+            ldi: 2,
+            adi: 2,
+            add: 3,
+            sub: 3,
+            xor: 3,
+            and: 3,
+            nor: 3,
+            brh: 2,
+            jmp: 1,
+            jid: 2,
+            lod: 3,
+            str: 3,
+            mov: 2,
+            cmp: 2,
+            inc: 1,
+            dec: 1,
+            not: 2,
+            neg: 2,
+            lsh: 2,
+            rsh: 2,
+        };
+    
+        return argumentCounts[instruction] || 0;
+    }
+    
 }
 
 export default Assembler;

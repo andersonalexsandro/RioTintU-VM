@@ -31,6 +31,18 @@ describe('Assembler', () => {
         expect(assembled[0]).toBe(immediate + r2 + opcode);
     });
 
+    test('LDI using define', () => {
+        const assembly = [
+            'define x r1',
+            'LDI x 0'
+        ];
+        const assembled = assembler.assemble(assembly);
+        const opcode = toBinary(Instructions.LDI, 4);
+        const r1 = toBinary(registers.indexOf('r1'), 4);
+        const immediate = toBinary(0, 8); // VALUE resolves to 42
+        expect(assembled[0]).toBe(immediate + r1 + opcode);
+    });
+
     test('ADD r4 r2 r3', () => {
         const assembly = ['ADD r4 r2 r3'];
         const assembled = assembler.assemble(assembly);
@@ -579,6 +591,8 @@ describe('Assembler', () => {
         expect(assembled[0]).toBe(reg1 + offset + reg2 + opcode);
     })
 
+
+
     test('CMP', () => {
         const assembly = ['CMP r1 r2'];
         const assembled = assembler.assemble(assembly);
@@ -645,6 +659,22 @@ describe('Assembler', () => {
         const reg0 = toBinary(0, 4);
         const reg1 = toBinary(1, 4);
         expect(assembled[0]).toBe(reg0 + reg1 + reg2 + opcode);
+    })
+});
+
+describe('Erros', () => {
+
+    const assembler = new Assembler();
+    const registers = [
+        'r0', 'r1', 'r2', 'r3', 'r4', 'r5', 'r6', 'r7',
+        'r8', 'r9', 'r10', 'r11', 'r12', 'r13', 'r14', 'r15',
+    ];
+
+    test('LDI error', () => {
+        const assembly = ['LDI r']
+        const assembled = assembler.validateAssembly(assembly);
+        console.log(assembled);
+        
     })
 });
 
