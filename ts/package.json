@@ -13,7 +13,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "start": "tsc && node build/index.js",
+    "start": "tsc && node build/main.js",
     "test": "jest"
   }
 }
