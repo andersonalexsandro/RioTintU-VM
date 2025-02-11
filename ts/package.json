@@ -1,5 +1,6 @@
 {
   "name": "vm",
+  "type": "module",
   "devDependencies": {
     "@babel/core": "^7.26.0",
     "@babel/preset-env": "^7.26.0",
@@ -13,7 +14,7 @@
   },
   "scripts": {
     "build": "tsc --project tsconfig.json && tsc-alias -p tsconfig.json",
-    "start": "tsc && node build/main.js",
-    "test": "jest"
+    "start": "tsc --project tsconfig.json && tsc-alias -p tsconfig.json && node build/main.js",
+    "test": "jest --config jest.config.js"
   }
 }
