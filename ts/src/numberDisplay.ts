@@ -4,16 +4,19 @@ export default class NumberDisplay implements Memory{
 
     public static readonly nBytesAlocated = 2; //16 bits to display
 
+    private content: Number;
     private ram: Ram;
     private ramAlocated: DataView;
 
     constructor(ram: Ram, initialAddress: number){
         this.ram = ram;
-        this.ramAlocated = new DataView(this.ram.getArrayBuffer(), initialAddress, NumberDisplay.nBytesAlocated);;        
+        this.ramAlocated = new DataView(this.ram.getArrayBuffer(), initialAddress, NumberDisplay.nBytesAlocated);
+        this.content = 0;       
     }
 
     public set(addres: number, value: number): void{
         this.ramAlocated.setUint8(addres, value);
+        this.content = value;
     }
 
     public get(addres: number): number{

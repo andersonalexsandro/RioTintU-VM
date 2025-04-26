@@ -1,6 +1,6 @@
 import { describe, expect, test } from '@jest/globals';
 import Assembler from '../src/assembler/assembler';
-import { Instructions } from '../src/cpu'; // Certifique-se de que `Instructions` contém todos os opcodes necessários.
+import { Instructions } from '../src/cpu';
 import { FlagCode } from '../src/flags';
 
 describe('Assembler', () => {
