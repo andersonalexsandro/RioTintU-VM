@@ -436,12 +436,12 @@ describe('Assembler', () => {
         expect(assembled[0]).toBe(immediate + r7 + opcode);
     });
 
-    test('LDI using port number_display_high8', () => {
-        const assembly = ['LDI r8 number_display_high8'];
+    test('LDI using port number_display_high_8', () => {
+        const assembly = ['LDI r8 number_display_high_8'];
         const assembled = assembler.assemble(assembly);
         const opcode = toBinary(Instructions.LDI, 4);
         const r8 = toBinary(8, 4); // Register r8
-        const immediate = toBinary(baseAddress + 7, 8); // Address of 'number_display_high8'
+        const immediate = toBinary(baseAddress + 7, 8); // Address of 'number_display_high_8'
         expect(assembled[0]).toBe(immediate + r8 + opcode);
     });
 
@@ -483,9 +483,9 @@ describe('Assembler', () => {
         expect(assembled[0]).toBe(immediate + r2 + opcode);
     });
     
-    test('ADI using define with I/O port (number_display_high8)', () => {
+    test('ADI using define with I/O port (number_display_high_8)', () => {
         const assembly = [
-            'DEFINE PORT number_display_high8',
+            'DEFINE PORT number_display_high_8',
             'DEFINE PORT2 PORT',
             'ADI r3 PORT2'
         ];
@@ -496,14 +496,14 @@ describe('Assembler', () => {
         expect(assembled[0]).toBe(immediate + r3 + opcode);
     });
 
-    test('ADI using I/O port (number_display_high8)', () => {
+    test('ADI using I/O port (number_display_high_8)', () => {
         const assembly = [
-            'ADI r3 number_display_high8'
+            'ADI r3 number_display_high_8'
         ];
         const assembled = assembler.assemble(assembly);
         const opcode = toBinary(Instructions.ADI, 4);
         const r3 = toBinary(3, 4); // Register r3
-        const immediate = toBinary(246 + 7, 8); // Address of 'number_display_high8' (base 246 + 7)
+        const immediate = toBinary(246 + 7, 8); // Address of 'number_display_high_8' (base 246 + 7)
         expect(assembled[0]).toBe(immediate + r3 + opcode);
     });
 

@@ -36,7 +36,7 @@ export class Assembler {
 
     private ports = [
         'clear_sreen_buffer', 'buffer_screen', 'clear_pixel', 'draw_pixel',
-        'pixel_x', 'pixel_y', 'number_display_low_8', 'number_display_high8'
+        'pixel_x', 'pixel_y', 'number_display_low_8', 'number_display_high_8'
     ];
 
     private labels = new Map<string, number>();
