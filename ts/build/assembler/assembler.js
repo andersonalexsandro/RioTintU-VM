@@ -13,20 +13,12 @@ export class Assembler {
         'r8', 'r9', 'r10', 'r11',
         'r12', 'r13', 'r14', 'r15'
     ];
-    // 000 - NOT MSB | Positive (>0)
-    // 001 - MSB  | Negative (<0)
-    // 010 - NOT COUT  | Less Than (C==false)
-    // 011 - COUT | Greater Than or Equal (c==true)
-    // 100 - ZERO | Equal (Z==true)
-    // 101 - NOT ZERO | Not Equal (z==false)
-    // 110 - NOT EVEN | odd (%2 == 1)
-    // 111 - EVEN (%2 == 0)
     conditions1 = ['pos', 'neg', 'lt', 'ge', 'eq', 'ne', 'odd', 'even'];
     conditions2 = ['>0', '<0', '<', '>=', '=', '!=', '!%2', '%2'];
     conditions4 = ['notmsb', 'msb', 'notcarry', 'carry', 'zero', 'notzero', 'noteven', 'even'];
     ports = [
         'clear_sreen_buffer', 'buffer_screen', 'clear_pixel', 'draw_pixel',
-        'pixel_x', 'pixel_y', 'number_display_low_8', 'number_display_high8'
+        'pixel_x', 'pixel_y', 'number_display_low_8', 'number_display_high_8'
     ];
     labels = new Map();
     symbols = new Map();
@@ -55,7 +47,7 @@ export class Assembler {
     }
     assemble(assemblyList) {
         const machineCode = [];
-        this.resolveLabelsAndDefines(assemblyList); // Resolve labels e define
+        this.resolveLabelsAndDefines(assemblyList);
         for (let i = 0; i < assemblyList.length; i++) {
             const line = assemblyList[i].trim();
             const args = line.split(/\s+/);
@@ -142,7 +134,11 @@ export class Assembler {
             const tokens = line.split(/\s+/);
             const firstToken = tokens[0]?.toLowerCase();
             if (firstToken === 'define') {
-                let [def, symbol, value] = tokens;
+                if (tokens.length !== 3) {
+                    continue;
+                }
+                const [, symbol, rawValue] = tokens;
+                let value = rawValue;
                 if (this.symbols.has(value.toLowerCase())) {
                     value = this.symbols.get(value.toLowerCase()).toString();
                 }
@@ -157,36 +153,32 @@ export class Assembler {
                 this.labels.set(labelName, currentAddress);
                 continue;
             }
-            // Increment address for instructions
             currentAddress++;
         }
     }
     jmp(args) {
         const opcode = this.symbolToBinary(args[0], 4);
-        const immediate = this.toBinary(args[1], 8); // Resolve to label, define, or literal        
+        const immediate = this.toBinary(args[1], 8);
         return `${immediate}0000${opcode}`;
     }
     toBinary(value, bits) {
         if (typeof value === 'string') {
-            // Resolve labels
             if (this.labels.has(value.toLowerCase())) {
                 value = this.labels.get(value.toLowerCase());
             }
-            // Resolve symbols or defines
             else if (this.symbols.has(value.toLowerCase())) {
                 value = this.symbols.get(value.toLowerCase());
             }
-            // Check if numeric literal
             else if (this.isNumeric(value)) {
                 value = Number(value);
             }
             else {
-                throw new Error(`Undefined label or invalid value: ${value}`);
+                throw new Error(`Undefined label or invalid symbol: ${value}`);
             }
         }
         const binary = Number(value).toString(2);
         if (binary.length > bits) {
-            throw new Error(`Value ${value} exceeds the limit of ${bits} bits`);
+            throw new Error(`Value ${value} exceeds ${bits} bits limit`);
         }
         return binary.padStart(bits, '0');
     }
@@ -248,7 +240,7 @@ export class Assembler {
         const opcode = this.symbolToBinary(args[0], 4);
         const regC = this.symbolToBinary(args[1], 4);
         const regA = this.symbolToBinary(args[2], 4);
-        return `${regA}${'0000'}${regC}${opcode}`;
+        return `${regA}0000${regC}${opcode}`;
     }
     memoryOperation(args) {
         const opcode = this.symbolToBinary(args[0], 4);
@@ -258,19 +250,17 @@ export class Assembler {
         return `${regA}${immediate}${regC}${opcode}`;
     }
     immediateOperation(args) {
-        const immediate = this.toBinary(args[2] || 0, 8); // Handle both numeric literals and defined symbols
+        const immediate = this.toBinary(args[2] || 0, 8);
         const reg = this.symbolToBinary(args[1], 4);
         const opcodeBinary = this.symbolToBinary(args[0], 4);
-        const assembled = `${immediate}${reg}${opcodeBinary}`;
-        return assembled;
+        return `${immediate}${reg}${opcodeBinary}`;
     }
     logicArithmeticOperation(args) {
         const regABin = this.symbolToBinary(args[2], 4);
         const regBBin = this.symbolToBinary(args[3], 4);
         const regCBin = this.symbolToBinary(args[1], 4);
         const opcodeBin = this.symbolToBinary(args[0], 4);
-        const assembled = `${regABin}${regBBin}${regCBin}${opcodeBin}`;
-        return assembled;
+        return `${regABin}${regBBin}${regCBin}${opcodeBin}`;
     }
     symbolToBinary(symbol, bits) {
         const value = this.symbols.get(symbol.toLowerCase());
@@ -281,74 +271,102 @@ export class Assembler {
     }
     validateAssembly(assemblyList) {
         const errors = [];
+        this.labels.clear();
+        this.symbols.clear();
+        this.initializeSymbols();
+        this.resolveLabelsAndDefines(assemblyList);
         for (let i = 0; i < assemblyList.length; i++) {
-            const line = assemblyList[i].trim();
-            // Ignore empty lines and comments
-            if (!line || line.startsWith('/') || line.startsWith('#'))
+            const rawLine = assemblyList[i];
+            const line = rawLine.trim();
+            if (!line || line.startsWith('/') || line.startsWith('#')) {
                 continue;
+            }
             const args = line.split(/\s+/);
-            const instruction = args[0]?.toLowerCase();
-            // Check for invalid instructions
-            if (!this.opcodes.includes(instruction) && instruction !== 'define' && !instruction.startsWith('.')) {
-                errors.push({
-                    line: i,
-                    message: `Invalid instruction: ${instruction}`,
-                });
-                continue;
-            }
-            // Check DEFINE
-            if (instruction === 'define') {
-                if (args.length < 3) {
-                    errors.push({
-                        line: i,
-                        message: `Invalid DEFINE syntax. Expected: "DEFINE SYMBOL VALUE"`,
-                    });
-                }
-                else if (isNaN(Number(args[2])) && !this.symbols.has(args[2].toLowerCase())) {
-                    errors.push({
-                        line: i + 1,
-                        message: `Invalid DEFINE value: ${args[2]}`,
-                    });
-                }
-                continue;
-            }
-            // Check labels
+            const instruction = args[0].toLowerCase();
+            // Label must be on its own
             if (instruction.startsWith('.')) {
                 if (args.length > 1) {
                     errors.push({
-                        line: i + 1,
-                        message: `Invalid label syntax. Labels should be standalone.`,
+                        line: i,
+                        message: `Invalid label syntax. Labels must be on their own: "${line}".`
                     });
                 }
                 continue;
             }
-            // Check arguments based on the instruction
-            const opcodeIndex = this.opcodes.indexOf(instruction);
-            if (opcodeIndex !== -1) {
-                const expectedArgs = this.getExpectedArguments(instruction);
-                if (args.length - 1 < expectedArgs) {
+            // DEFINE directive
+            if (instruction === 'define') {
+                if (args.length !== 3) {
                     errors.push({
                         line: i,
-                        message: `Instruction "${instruction}" expects ${expectedArgs} arguments but got ${args.length - 1}.`,
+                        message: `Invalid DEFINE syntax. Use: "DEFINE <SYMBOL> <VALUE>".`
+                    });
+                    continue;
+                }
+                const valueToken = args[2];
+                if (!this.isNumeric(valueToken) && !this.symbols.has(valueToken.toLowerCase())) {
+                    errors.push({
+                        line: i,
+                        message: `Invalid DEFINE value: "${valueToken}".`
                     });
                 }
-                // Check for invalid registers or symbols
-                args.slice(1).forEach((arg, index) => {
-                    if (!this.registers.includes(arg.toLowerCase()) &&
-                        !this.symbols.has(arg.toLowerCase()) &&
-                        !this.isNumeric(arg)) {
-                        errors.push({
-                            line: i + 1,
-                            message: `Invalid argument "${arg}" for instruction "${instruction}" at position ${index + 1}.`,
-                        });
-                    }
+                continue;
+            }
+            // Invalid instruction
+            if (!this.opcodes.includes(instruction)) {
+                errors.push({
+                    line: i,
+                    message: `Invalid instruction: "${instruction}".`
                 });
+                continue;
+            }
+            // Argument count validation
+            const actualArgs = args.length - 1;
+            if (instruction === 'jid') {
+                if (actualArgs < 1 || actualArgs > 2) {
+                    errors.push({
+                        line: i,
+                        message: `Instruction "jid" expects 1 or 2 argument(s) but received ${actualArgs}.`
+                    });
+                    continue;
+                }
+            }
+            else if (instruction === 'lod' || instruction === 'str') {
+                if (actualArgs < 2 || actualArgs > 3) {
+                    errors.push({
+                        line: i,
+                        message: `Instruction "${instruction}" expects 2 or 3 argument(s) but received ${actualArgs}.`
+                    });
+                    continue;
+                }
+            }
+            else {
+                const expected = this.getExpectedArguments(instruction);
+                if (actualArgs !== expected) {
+                    errors.push({
+                        line: i,
+                        message: `Instruction "${instruction}" expects ${expected} argument(s) but received ${actualArgs}.`
+                    });
+                    continue;
+                }
+            }
+            // Validate each argument: register, symbol, number, or label
+            for (let k = 1; k < args.length; k++) {
+                const tokenLower = args[k].toLowerCase();
+                const isRegister = this.registers.includes(tokenLower);
+                const isSymbol = this.symbols.has(tokenLower);
+                const isLabel = this.labels.has(tokenLower);
+                const isNumber = this.isNumeric(tokenLower);
+                if (!isRegister && !isSymbol && !isLabel && !isNumber) {
+                    errors.push({
+                        line: i,
+                        message: `Invalid argument "${tokenLower}" for instruction "${instruction}" (position ${k}).`
+                    });
+                }
             }
         }
         return errors;
     }
     getExpectedArguments(instruction) {
-        // Define the expected number of arguments for each instruction
         const argumentCounts = {
             ldi: 2,
             adi: 2,
@@ -359,7 +377,6 @@ export class Assembler {
             nor: 3,
             brh: 2,
             jmp: 1,
-            jid: 2,
             lod: 3,
             str: 3,
             mov: 2,
@@ -370,6 +387,7 @@ export class Assembler {
             neg: 2,
             lsh: 2,
             rsh: 2,
+            jid: 2
         };
         return argumentCounts[instruction] || 0;
     }

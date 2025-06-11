@@ -4,7 +4,7 @@ import { describe, expect, test } from '@jest/globals';
 import Assembler from '../src/assembler/assembler';
 
 describe('validateAssembly', () => {
-  test('no errors for completamente valid assembly lines', () => {
+  test('no errors for completely valid assembly lines', () => {
     const assembler = new Assembler();
     const validLines = [
       'DEFINE CONST 10',
@@ -19,11 +19,11 @@ describe('validateAssembly', () => {
       'JMP .start',
       'BRH >0 3',
       'JID r1 4',
-      'JID r2',           // JID com 1 argumento
+      'JID r2',           // JID with 1 argument
       'LOD r2 r1 8',
-      'LOD r3 r0',        // LOD sem offset (2 argumentos)
+      'LOD r3 r0',        // LOD without offset (2 arguments)
       'STR r3 r0 12',
-      'STR r4 r1',        // STR sem offset (2 argumentos)
+      'STR r4 r1',        // STR without offset (2 arguments)
       'CMP r1 r2',
       'MOV r2 r1',
       'LSH r3 r2',
@@ -41,7 +41,7 @@ describe('validateAssembly', () => {
   test('reports invalid instruction name', () => {
     const assembler = new Assembler();
     const lines = [
-      'FOO r1 r2 r3',   // opcode desconhecido
+      'FOO r1 r2 r3',   // unknown opcode
       'ldi r0 1',
     ];
     const errors = assembler.validateAssembly(lines);
@@ -52,65 +52,65 @@ describe('validateAssembly', () => {
     });
   });
 
-  test('reports DEFINE com número errado de tokens', () => {
+  test('reports DEFINE with wrong number of tokens', () => {
     const assembler = new Assembler();
     const lines = [
-      'DEFINE X',            // apenas 1 token após DEFINE
-      'DEFINE A B C D',      // 3 tokens após DEFINE
+      'DEFINE X',            // only 1 token after DEFINE
+      'DEFINE A B C D',      // 3 tokens after DEFINE
       'LDI r0 1'
     ];
     const errors = assembler.validateAssembly(lines);
     expect(errors).toHaveLength(2);
     expect(errors[0]).toEqual({
       line: 0,
-      message: `DEFINE syntax inválido. Use: "DEFINE <SIMBOLO> <VALOR>".`
+      message: `Invalid DEFINE syntax. Use: "DEFINE <SYMBOL> <VALUE>".`
     });
     expect(errors[1]).toEqual({
       line: 1,
-      message: `DEFINE syntax inválido. Use: "DEFINE <SIMBOLO> <VALOR>".`
+      message: `Invalid DEFINE syntax. Use: "DEFINE <SYMBOL> <VALUE>".`
     });
   });
 
-  test('reports DEFINE com valor inválido', () => {
+  test('reports DEFINE with invalid value', () => {
     const assembler = new Assembler();
     const lines = [
-      'DEFINE X UNKNOWN_TOKEN',  // UNKNOWN_TOKEN não é numérico nem definido
+      'DEFINE X UNKNOWN_TOKEN',  // UNKNOWN_TOKEN is not numeric or defined
     ];
     const errors = assembler.validateAssembly(lines);
     expect(errors).toHaveLength(1);
     expect(errors[0]).toEqual({
       line: 0,
-      message: `DEFINE valor inválido: "UNKNOWN_TOKEN".`
+      message: `Invalid DEFINE value: "UNKNOWN_TOKEN".`
     });
   });
 
-  test('reports label com sintaxe inválida quando possui tokens extras', () => {
+  test('reports invalid label syntax when extra tokens present', () => {
     const assembler = new Assembler();
     const lines = [
-      '.loop extra',     // rótulo não deve ter nada além do nome
+      '.loop extra',     // label must be alone
       'LDI r0 0'
     ];
     const errors = assembler.validateAssembly(lines);
     expect(errors).toHaveLength(1);
     expect(errors[0]).toEqual({
       line: 0,
-      message: `Invalid label syntax. Labels devem estar sozinhos: ".loop extra".`
+      message: `Invalid label syntax. Labels must be on their own: ".loop extra".`
     });
   });
 
-  test('reports contagem de argumentos incorreta para vários opcodes', () => {
+  test('reports incorrect argument count for various opcodes', () => {
     const assembler = new Assembler();
     const lines = [
-      'ADD r1 r2',         // espera 3 args, recebeu 2
-      'SUB r3 r4 r5 r6',   // espera 3 args, recebeu 4
-      'LDI r0',            // espera 2 args, recebeu 1
-      'JMP',               // espera 1 arg, recebeu 0
-      'BRH >0',            // espera 2 args, recebeu 1
-      'INC',               // espera 1 arg, recebeu 0
-      'DEC r1 r2',         // espera 1 arg, recebeu 2
-      'NOT r1',            // espera 2 args, recebeu 1
-      'NEG r2 r3 extra',   // espera 2 args, recebeu 3
-      'JID'                // espera 1 ou 2 args, recebeu 0
+      'ADD r1 r2',         // expects 3 args, got 2
+      'SUB r3 r4 r5 r6',   // expects 3 args, got 4
+      'LDI r0',            // expects 2 args, got 1
+      'JMP',               // expects 1 arg, got 0
+      'BRH >0',            // expects 2 args, got 1
+      'INC',               // expects 1 arg, got 0
+      'DEC r1 r2',         // expects 1 arg, got 2
+      'NOT r1',            // expects 2 args, got 1
+      'NEG r2 r3 extra',   // expects 2 args, got 3
+      'JID'                // expects 1 or 2 args, got 0
     ];
     const errors = assembler.validateAssembly(lines);
 
@@ -118,76 +118,76 @@ describe('validateAssembly', () => {
 
     expect(errors[0]).toEqual({
       line: 0,
-      message: `Instruction "add" espera 3 argumento(s) mas recebeu 2.`
+      message: `Instruction "add" expects 3 argument(s) but received 2.`
     });
     expect(errors[1]).toEqual({
       line: 1,
-      message: `Instruction "sub" espera 3 argumento(s) mas recebeu 4.`
+      message: `Instruction "sub" expects 3 argument(s) but received 4.`
     });
     expect(errors[2]).toEqual({
       line: 2,
-      message: `Instruction "ldi" espera 2 argumento(s) mas recebeu 1.`
+      message: `Instruction "ldi" expects 2 argument(s) but received 1.`
     });
     expect(errors[3]).toEqual({
       line: 3,
-      message: `Instruction "jmp" espera 1 argumento(s) mas recebeu 0.`
+      message: `Instruction "jmp" expects 1 argument(s) but received 0.`
     });
     expect(errors[4]).toEqual({
       line: 4,
-      message: `Instruction "brh" espera 2 argumento(s) mas recebeu 1.`
+      message: `Instruction "brh" expects 2 argument(s) but received 1.`
     });
     expect(errors[5]).toEqual({
       line: 5,
-      message: `Instruction "inc" espera 1 argumento(s) mas recebeu 0.`
+      message: `Instruction "inc" expects 1 argument(s) but received 0.`
     });
     expect(errors[6]).toEqual({
       line: 6,
-      message: `Instruction "dec" espera 1 argumento(s) mas recebeu 2.`
+      message: `Instruction "dec" expects 1 argument(s) but received 2.`
     });
     expect(errors[7]).toEqual({
       line: 7,
-      message: `Instruction "not" espera 2 argumento(s) mas recebeu 1.`
+      message: `Instruction "not" expects 2 argument(s) but received 1.`
     });
     expect(errors[8]).toEqual({
       line: 8,
-      message: `Instruction "neg" espera 2 argumento(s) mas recebeu 3.`
+      message: `Instruction "neg" expects 2 argument(s) but received 3.`
     });
     expect(errors[9]).toEqual({
       line: 9,
-      message: `Instruction "jid" espera 1 ou 2 argumento(s) mas recebeu 0.`
+      message: `Instruction "jid" expects 1 or 2 argument(s) but received 0.`
     });
   });
 
-  test('reports tokens inválidos para registrador, símbolo ou número', () => {
+  test('reports invalid tokens for register, symbol, or number', () => {
     const assembler = new Assembler();
     const lines = [
-      'ADD r1 foo r2',    // "foo" não é registrador/símbolo/número
-      'LDI r0 BAR',       // "BAR" ainda não definido
-      'BRH >0 BAZ',       // "BAZ" não é numérico ou símbolo
-      'JMP unknownLabel'  // "unknownLabel" não foi definido como label
+      'ADD r1 foo r2',    // "foo" is not register/symbol/number
+      'LDI r0 BAR',       // "BAR" not defined yet
+      'BRH >0 BAZ',       // "BAZ" not numeric or symbol
+      'JMP unknownLabel'  // "unknownLabel" not defined as a label
     ];
     const errors = assembler.validateAssembly(lines);
     expect(errors).toHaveLength(4);
 
     expect(errors[0]).toEqual({
       line: 0,
-      message: `Argumento inválido "foo" para instrução "add" (posição 2).`
+      message: `Invalid argument "foo" for instruction "add" (position 2).`
     });
     expect(errors[1]).toEqual({
       line: 1,
-      message: `Argumento inválido "bar" para instrução "ldi" (posição 2).`
+      message: `Invalid argument "bar" for instruction "ldi" (position 2).`
     });
     expect(errors[2]).toEqual({
       line: 2,
-      message: `Argumento inválido "baz" para instrução "brh" (posição 2).`
+      message: `Invalid argument "baz" for instruction "brh" (position 2).`
     });
     expect(errors[3]).toEqual({
       line: 3,
-      message: `Argumento inválido "unknownlabel" para instrução "jmp" (posição 1).`
+      message: `Invalid argument "unknownlabel" for instruction "jmp" (position 1).`
     });
   });
 
-  test('allows numeric literals e símbolos definidos anteriormente', () => {
+  test('allows numeric literals and previously defined symbols', () => {
     const assembler = new Assembler();
     const lines = [
       'DEFINE X 7',

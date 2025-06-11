@@ -1,5 +1,3 @@
-// src/assembler/assembler.ts
-
 interface ErrorInfo {
   line: number;
   message: string;
@@ -212,13 +210,13 @@ export class Assembler {
       } else if (this.isNumeric(value)) {
         value = Number(value);
       } else {
-        throw new Error(`Undefined label or invalid value: ${value}`);
+        throw new Error(`Undefined label or invalid symbol: ${value}`);
       }
     }
 
     const binary = Number(value).toString(2);
     if (binary.length > bits) {
-      throw new Error(`Value ${value} exceeds the limit of ${bits} bits`);
+      throw new Error(`Value ${value} exceeds ${bits} bits limit`);
     }
     return binary.padStart(bits, '0');
   }
@@ -342,23 +340,23 @@ export class Assembler {
       const args = line.split(/\s+/);
       const instruction = args[0].toLowerCase();
 
-      // Label (deve estar sozinho)
+      // Label must be on its own
       if (instruction.startsWith('.')) {
         if (args.length > 1) {
           errors.push({
             line: i,
-            message: `Invalid label syntax. Labels devem estar sozinhos: "${line}".`
+            message: `Invalid label syntax. Labels must be on their own: "${line}".`
           });
         }
         continue;
       }
 
-      // DEFINE
+      // DEFINE directive
       if (instruction === 'define') {
         if (args.length !== 3) {
           errors.push({
             line: i,
-            message: `DEFINE syntax inválido. Use: "DEFINE <SIMBOLO> <VALOR>".`
+            message: `Invalid DEFINE syntax. Use: "DEFINE <SYMBOL> <VALUE>".`
           });
           continue;
         }
@@ -366,13 +364,13 @@ export class Assembler {
         if (!this.isNumeric(valueToken) && !this.symbols.has(valueToken.toLowerCase())) {
           errors.push({
             line: i,
-            message: `DEFINE valor inválido: "${valueToken}".`
+            message: `Invalid DEFINE value: "${valueToken}".`
           });
         }
         continue;
       }
 
-      // Instrução inválida
+      // Invalid instruction
       if (!this.opcodes.includes(instruction)) {
         errors.push({
           line: i,
@@ -381,14 +379,14 @@ export class Assembler {
         continue;
       }
 
-      // Contagem de argumentos
+      // Argument count validation
       const actualArgs = args.length - 1;
 
       if (instruction === 'jid') {
         if (actualArgs < 1 || actualArgs > 2) {
           errors.push({
             line: i,
-            message: `Instruction "jid" espera 1 ou 2 argumento(s) mas recebeu ${actualArgs}.`
+            message: `Instruction "jid" expects 1 or 2 argument(s) but received ${actualArgs}.`
           });
           continue;
         }
@@ -396,7 +394,7 @@ export class Assembler {
         if (actualArgs < 2 || actualArgs > 3) {
           errors.push({
             line: i,
-            message: `Instruction "${instruction}" espera 2 ou 3 argumento(s) mas recebeu ${actualArgs}.`
+            message: `Instruction "${instruction}" expects 2 or 3 argument(s) but received ${actualArgs}.`
           });
           continue;
         }
@@ -405,13 +403,13 @@ export class Assembler {
         if (actualArgs !== expected) {
           errors.push({
             line: i,
-            message: `Instruction "${instruction}" espera ${expected} argumento(s) mas recebeu ${actualArgs}.`
+            message: `Instruction "${instruction}" expects ${expected} argument(s) but received ${actualArgs}.`
           });
           continue;
         }
       }
 
-      // Validação de cada argumento: registrador, símbolo, número ou label
+      // Validate each argument: register, symbol, number, or label
       for (let k = 1; k < args.length; k++) {
         const tokenLower = args[k].toLowerCase();
         const isRegister = this.registers.includes(tokenLower);
@@ -422,7 +420,7 @@ export class Assembler {
         if (!isRegister && !isSymbol && !isLabel && !isNumber) {
           errors.push({
             line: i,
-            message: `Argumento inválido "${tokenLower}" para instrução "${instruction}" (posição ${k}).`
+            message: `Invalid argument "${tokenLower}" for instruction "${instruction}" (position ${k}).`
           });
         }
       }
